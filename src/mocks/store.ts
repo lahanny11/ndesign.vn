@@ -16,12 +16,12 @@ export interface MockOrder {
   team_id: string
   orderer_name: string
   orderer_avatar: null
-  designer_name: null
+  designer_name: string | null
   designer_avatar: null
   product_type_name: string
   product_size_name: string
   created_at: string
-  done_at: null
+  done_at: string | null
   progress: number
 }
 
