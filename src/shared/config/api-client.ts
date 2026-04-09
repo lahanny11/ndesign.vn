@@ -1,13 +1,22 @@
 import { supabase } from './supabase'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const DEV_BYPASS = import.meta.env.VITE_DEV_BYPASS === 'true'
 
 async function getAuthHeaders(): Promise<HeadersInit> {
-  const { data } = await supabase.auth.getSession()
-  const token = data.session?.access_token
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  // Dev mode: skip Supabase (placeholder credentials would throw)
+  if (DEV_BYPASS) {
+    return { 'Content-Type': 'application/json' }
+  }
+  try {
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    }
+  } catch {
+    return { 'Content-Type': 'application/json' }
   }
 }
 

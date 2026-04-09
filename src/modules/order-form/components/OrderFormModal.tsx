@@ -77,10 +77,12 @@ export default function OrderFormModal({ open, onClose }: Props) {
   const upd2 = (d: Partial<OrderFormStep2>) => setForm(f => ({ ...f, step2: { ...f.step2, ...d } }))
   const upd3 = (d: Partial<OrderFormStep3>) => setForm(f => ({ ...f, step3: { ...f.step3, ...d } }))
 
+  const DEV = import.meta.env.VITE_DEV_BYPASS === 'true'
+
   const canNext = () => {
     if (step === 0) return !!form.step1.task_name.trim() && !!form.step1.team_id && !!form.step1.deadline
     if (step === 1) return !!form.step2.product_type_id && !!form.step2.product_size_name
-    if (step === 2) return form.step3.brief_text.length >= 10 && !!form.step3.moodboard_id
+    if (step === 2) return form.step3.brief_text.length >= 10 && (DEV || !!form.step3.moodboard_id)
     return true
   }
 

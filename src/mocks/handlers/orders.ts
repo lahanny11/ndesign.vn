@@ -6,10 +6,8 @@ let orderCounter = 8
 
 export const orderHandlers = [
   http.post(`${BASE}/api/v1/orders`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>
-    if (!body.moodboard_id) {
-      return HttpResponse.json({ code: 'MOODBOARD_REQUIRED', message: 'Vui lòng phân tích phong cách trước khi tiếp tục' }, { status: 422 })
-    }
+    await request.json()
+    // Dev mode: accept order without moodboard_id for easy testing
     const num = String(orderCounter++).padStart(4, '0')
     return HttpResponse.json({
       id: crypto.randomUUID(),
