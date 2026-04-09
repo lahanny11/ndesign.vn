@@ -108,27 +108,28 @@ export default function OrderFormModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
-      <div className="bg-white rounded-2xl w-full max-w-[560px] overflow-hidden flex flex-col"
+      <div className="bg-white rounded-2xl w-full max-w-[620px] overflow-hidden flex flex-col"
         style={{
           boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.08)',
           maxHeight: 'calc(100vh - 48px)',
         }}>
 
         {/* Header */}
-        <div className="px-6 py-5 flex items-center justify-between shrink-0"
+        <div className="px-7 py-5 flex items-center justify-between shrink-0"
           style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
           {submitted ? (
-            <p className="text-[15px] font-semibold text-[#1D1D1F]">Đã gửi thành công</p>
+            <p style={{ fontSize: '17px', fontWeight: 700, color: '#1D1D1F' }}>Đã gửi thành công</p>
           ) : (
             <div>
-              <p className="text-[15px] font-semibold text-[#1D1D1F]">{STEPS[step].label}</p>
-              <p className="text-[12px] text-[#AEAEB2] mt-0.5">{STEPS[step].sub}</p>
+              <p style={{ fontSize: '17px', fontWeight: 700, color: '#1D1D1F', margin: 0 }}>{STEPS[step].label}</p>
+              <p style={{ fontSize: '13px', color: '#AEAEB2', margin: '3px 0 0' }}>{STEPS[step].sub}</p>
             </div>
           )}
           <button onClick={handleClose}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[#AEAEB2] hover:text-[#6E6E73] transition-colors"
-            style={{ background: 'rgba(0,0,0,0.06)' }}>
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+            style={{ width: '30px', height: '30px', borderRadius: '50%', border: 'none', cursor: 'pointer',
+              background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#6E6E73', flexShrink: 0 }}>
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
               <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
@@ -137,29 +138,35 @@ export default function OrderFormModal({ open, onClose }: Props) {
 
         {/* Step indicator */}
         {!submitted && (
-          <div className="px-6 py-3 flex items-center gap-2 shrink-0"
-            style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', background: 'rgba(0,0,0,0.02)' }}>
+          <div className="px-7 flex items-center gap-1 shrink-0"
+            style={{ padding: '12px 28px', borderBottom: '1px solid rgba(0,0,0,0.06)', background: 'rgba(0,0,0,0.015)' }}>
             {STEPS.map((s, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold transition-all
-                    ${i === step ? 'text-white' : i < step ? 'text-white' : 'text-[#AEAEB2]'}`}
-                    style={{
-                      background: i === step ? '#5E5CE6' : i < step ? '#34C759' : 'rgba(0,0,0,0.08)',
-                    }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{
+                    width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '11px', fontWeight: 700,
+                    background: i === step ? '#5E5CE6' : i < step ? '#34C759' : 'rgba(0,0,0,0.08)',
+                    color: i <= step ? '#fff' : '#AEAEB2',
+                    transition: 'all 0.2s ease',
+                  }}>
                     {i < step ? (
-                      <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24">
-                        <polyline points="20 6 9 17 4 12" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                      <svg width="11" height="11" fill="none" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12" stroke="white" strokeWidth="3" strokeLinecap="round"/>
                       </svg>
                     ) : i + 1}
                   </div>
-                  <span className={`text-[11px] font-medium transition-all
-                    ${i === step ? 'text-[#1D1D1F]' : i < step ? 'text-[#34C759]' : 'text-[#AEAEB2]'}`}>
+                  <span style={{
+                    fontSize: '13px', fontWeight: i === step ? 600 : 400,
+                    color: i === step ? '#1D1D1F' : i < step ? '#34C759' : '#AEAEB2',
+                    transition: 'all 0.2s ease',
+                  }}>
                     {s.label}
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="w-6 h-px" style={{ background: 'rgba(0,0,0,0.1)' }}/>
+                  <div style={{ width: '20px', height: '1px', background: 'rgba(0,0,0,0.1)', margin: '0 4px' }}/>
                 )}
               </div>
             ))}
@@ -209,7 +216,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
               </div>
             </div>
           ) : (
-            <div className="px-6 py-5">
+            <div className="px-7 py-6">
               {step === 0 && <Step1BasicInfo data={form.step1} onChange={upd1} teams={teams} orderers={orderers} />}
               {step === 1 && <Step2ProductType data={form.step2} onChange={upd2} productTypes={productTypes} />}
               {step === 2 && <Step3Brief data={form.step3} onChange={upd3} draftOrderId={form.draft_order_id} />}
@@ -220,35 +227,43 @@ export default function OrderFormModal({ open, onClose }: Props) {
 
         {/* Footer */}
         {!submitted && (
-          <div className="px-6 py-4 shrink-0"
-            style={{ borderTop: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.02)' }}>
+          <div style={{ padding: '16px 28px', borderTop: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.015)', flexShrink: 0 }}>
             {!canNext && hint && (
-              <p className="text-[11px] text-[#AEAEB2] mb-3 text-center">{hint}</p>
+              <p style={{ fontSize: '13px', color: '#AEAEB2', marginBottom: '12px', textAlign: 'center' }}>{hint}</p>
             )}
-            <div className="flex gap-2">
+            <div style={{ display: 'flex', gap: '10px' }}>
               {step > 0 && (
-                <button onClick={() => setStep(s => s - 1)}
-                  className="px-4 h-10 rounded-[10px] text-[13px] font-medium text-[#1D1D1F] transition-colors"
-                  style={{ background: 'rgba(0,0,0,0.06)' }}
+                <button
+                  onClick={() => setStep(s => s - 1)}
+                  style={{
+                    padding: '0 20px', height: '44px', borderRadius: '10px',
+                    fontSize: '14px', fontWeight: 500, color: '#1D1D1F',
+                    background: 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer',
+                    transition: 'background 0.15s ease', flexShrink: 0,
+                  }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.1)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}>
                   Quay lại
                 </button>
               )}
-              <button onClick={handleNext} disabled={!canNext || submitMutation.isPending}
-                className="flex-1 h-10 rounded-[10px] text-[13px] font-semibold text-white flex items-center justify-center gap-2
-                  transition-all active:scale-[0.98]"
+              <button
+                onClick={handleNext}
+                disabled={!canNext || submitMutation.isPending}
                 style={{
+                  flex: 1, height: '44px', borderRadius: '10px',
+                  fontSize: '15px', fontWeight: 600, color: '#fff',
+                  border: 'none', cursor: canNext && !submitMutation.isPending ? 'pointer' : 'not-allowed',
                   background: canNext && !submitMutation.isPending ? '#5E5CE6' : 'rgba(0,0,0,0.12)',
-                  cursor: canNext && !submitMutation.isPending ? 'pointer' : 'not-allowed',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  transition: 'all 0.15s ease',
                 }}>
                 {submitMutation.isPending ? (
-                  <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>Đang gửi...</>
-                ) : step === 3 ? 'Gửi order' : 'Tiếp theo'}
+                  <><div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}/>Đang gửi...</>
+                ) : step === 3 ? 'Gửi order' : 'Tiếp theo →'}
               </button>
             </div>
             {error && (
-              <p className="text-[11px] mt-2 text-center" style={{ color: '#FF3B30' }}>{error}</p>
+              <p style={{ fontSize: '13px', color: '#FF3B30', marginTop: '10px', textAlign: 'center' }}>{error}</p>
             )}
           </div>
         )}
