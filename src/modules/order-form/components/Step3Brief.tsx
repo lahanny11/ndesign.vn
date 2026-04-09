@@ -10,27 +10,23 @@ interface Props {
 }
 
 const STYLE_EXAMPLES = [
-  { label: 'Tối giản đen trắng', emoji: '⬛', desc: 'Minimalist, clean' },
-  { label: 'Vintage retro màu ấm', emoji: '🟤', desc: 'Retro, earthy tones' },
-  { label: 'Hiện đại corporate', emoji: '🔷', desc: 'Professional, bold' },
-  { label: 'Pastel nhẹ nhàng', emoji: '🩷', desc: 'Soft, feminine' },
-  { label: 'Bold & colorful', emoji: '🌈', desc: 'Vibrant, energetic' },
+  'Tối giản đen trắng',
+  'Vintage retro màu ấm',
+  'Hiện đại corporate',
+  'Pastel nhẹ nhàng',
+  'Bold & colorful',
 ]
 
 const COLOR_PRESETS = [
-  { hex: '#7B8EF7', name: 'Indigo' },
-  { hex: '#E07A7A', name: 'Coral' },
-  { hex: '#5BB89A', name: 'Mint' },
-  { hex: '#E8925A', name: 'Orange' },
-  { hex: '#B89CC8', name: 'Lavender' },
-  { hex: '#F4D03F', name: 'Yellow' },
-  { hex: '#2D2D3A', name: 'Dark' },
-  { hex: '#F5F3EF', name: 'Cream' },
+  { hex: '#5E5CE6', name: 'Purple' },
+  { hex: '#007AFF', name: 'Blue' },
+  { hex: '#34C759', name: 'Green' },
+  { hex: '#FF9F0A', name: 'Orange' },
+  { hex: '#FF3B30', name: 'Red' },
+  { hex: '#FF2D55', name: 'Pink' },
+  { hex: '#1D1D1F', name: 'Black' },
+  { hex: '#F5F5F7', name: 'Silver' },
 ]
-
-const inputCls = `w-full bg-[#FAFAF9] border-[1.5px] border-[#E4E0EF] rounded-xl px-3.5 py-2.5
-  text-[13px] text-[#2D2D3A] font-[inherit] outline-none transition-all
-  focus:border-[#7B8EF7] focus:bg-white focus:shadow-[0_0_0_3px_rgba(123,142,247,0.08)]`
 
 type Tab = 'ai' | 'upload' | 'color'
 
@@ -41,11 +37,14 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
   const [aiError, setAiError] = useState<string | null>(null)
   const [moodboard, setMoodboard] = useState<MoodboardResult | null>(null)
   const [uploadedPreviews, setUploadedPreviews] = useState<string[]>([])
+  const [briefFocused, setBriefFocused] = useState(false)
+  const [styleFocused, setStyleFocused] = useState(false)
+  const [aiFocused, setAiFocused] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const DEV = import.meta.env.VITE_DEV_BYPASS === 'true'
 
   const briefOk = data.brief_text.length >= 10
-  const briefPct = Math.min((data.brief_text.length / 10) * 100, 100)
+  const briefCount = data.brief_text.length
 
   const handleAnalyze = async () => {
     if (aiInput.trim().length < 5) return
@@ -61,9 +60,9 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
     } catch (err: unknown) {
       const e = err as { code?: string }
       if (e?.code === 'AI_RATE_LIMIT_EXCEEDED') {
-        setAiError('Bạn đã generate quá 5 lần trong 1 phút. Thử lại sau ít giây.')
+        setAiError('Quá 5 lần trong 1 phút. Thử lại sau ít giây.')
       } else {
-        setAiError('Dịch vụ AI tạm gián đoạn. Bạn có thể bỏ qua và gửi bước tiếp theo.')
+        setAiError('Dịch vụ AI tạm gián đoạn. Bạn có thể bỏ qua bước này.')
       }
     } finally {
       setAiLoading(false)
@@ -74,8 +73,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
     const files = Array.from(e.target.files ?? [])
     const previews = files.map(f => URL.createObjectURL(f))
     setUploadedPreviews(prev => [...prev, ...previews].slice(0, 8))
-    // In real flow: upload to Cloudflare and get UIDs
-    onChange({ media_cloudflare_uids: uploadedPreviews })
+    onChange({ media_cloudflare_uids: [] })
     e.target.value = ''
   }
 
@@ -92,72 +90,138 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
     onChange({ primary_colors: colors })
   }
 
-  const TABS: { key: Tab; label: string; icon: string }[] = [
-    { key: 'ai',     label: 'AI Moodboard', icon: '✦' },
-    { key: 'upload', label: 'Ảnh tham khảo', icon: '🖼️' },
-    { key: 'color',  label: 'Màu sắc',       icon: '🎨' },
+  const TABS: { key: Tab; label: string }[] = [
+    { key: 'ai',     label: 'AI Moodboard' },
+    { key: 'upload', label: 'Ảnh tham khảo' },
+    { key: 'color',  label: 'Màu sắc' },
   ]
 
-  return (
-    <div className="flex flex-col gap-4">
+  const inputBase: React.CSSProperties = {
+    width: '100%',
+    background: 'rgba(0,0,0,0.04)',
+    border: '1px solid transparent',
+    borderRadius: '10px',
+    padding: '10px 14px',
+    fontSize: '14px',
+    color: '#1D1D1F',
+    fontFamily: 'inherit',
+    outline: 'none',
+    transition: 'all 0.15s ease',
+  }
+  const inputFocus: React.CSSProperties = {
+    background: '#fff',
+    border: '1px solid rgba(94,92,230,0.5)',
+    boxShadow: '0 0 0 3px rgba(94,92,230,0.1)',
+  }
+  const inputDone: React.CSSProperties = {
+    background: 'rgba(52,199,89,0.05)',
+    border: '1px solid rgba(52,199,89,0.2)',
+  }
 
-      {/* Brief textarea — REQUIRED */}
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+      {/* Brief textarea */}
       <div>
-        <div className="flex items-center justify-between mb-1.5">
-          <label className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#A89EC0]">
-            Brief chi tiết <span className="text-[#E07A7A]">*</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+          <label style={{ fontSize: '12px', fontWeight: 600, color: '#6E6E73', letterSpacing: '0.01em' }}>
+            Brief chi tiết <span style={{ color: '#FF3B30' }}>*</span>
           </label>
-          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all
-            ${briefOk ? 'bg-[#E4F5F0] text-[#5BB89A]' : 'bg-[#F2F0F7] text-[#A89EC0]'}`}>
-            {briefOk ? '✓ Đủ rồi!' : `Cần thêm ${10 - data.brief_text.length} ký tự`}
+          <span style={{
+            fontSize: '11px',
+            fontWeight: 500,
+            color: briefOk ? '#34C759' : '#AEAEB2',
+            transition: 'color 0.2s',
+          }}>
+            {briefCount}/2000
           </span>
         </div>
         <textarea
           value={data.brief_text}
           onChange={e => onChange({ brief_text: e.target.value })}
-          placeholder="Mô tả chi tiết dự án: mục đích, đối tượng mục tiêu, phong cách, màu sắc mong muốn, nội dung cần có...&#10;&#10;Càng chi tiết → designer hiểu đúng ngay từ đầu → ít revision hơn! 🎯"
+          onFocus={() => setBriefFocused(true)}
+          onBlur={() => setBriefFocused(false)}
+          placeholder="Mô tả mục đích, đối tượng mục tiêu, phong cách, nội dung cần có...&#10;Càng chi tiết, designer hiểu đúng ngay từ đầu."
           maxLength={2000}
           rows={5}
-          className={`${inputCls} resize-none leading-relaxed ${briefOk ? 'border-[#C4E8DA] bg-[#F8FDF9]' : ''}`}
+          style={{
+            ...inputBase,
+            resize: 'none',
+            lineHeight: '1.6',
+            ...(briefFocused ? inputFocus : briefOk ? inputDone : {}),
+          }}
         />
-        {/* Progress bar for brief */}
-        <div className="flex items-center gap-2 mt-1.5">
-          <div className="flex-1 h-1 bg-[#F2F0F7] rounded-full overflow-hidden">
-            <div className={`h-full rounded-full transition-all duration-300 ${briefOk ? 'bg-[#5BB89A]' : 'bg-[#7B8EF7]'}`}
-              style={{ width: `${briefPct}%` }}/>
+        {/* Progress bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+          <div style={{ flex: 1, height: '2px', background: 'rgba(0,0,0,0.06)', borderRadius: '1px', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              borderRadius: '1px',
+              background: briefOk ? '#34C759' : '#5E5CE6',
+              width: `${Math.min((briefCount / 10) * 100, 100)}%`,
+              transition: 'width 0.3s ease, background 0.3s ease',
+            }} />
           </div>
-          <span className="text-[9px] text-[#A89EC0] shrink-0">{data.brief_text.length}/2000</span>
+          {briefOk && (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          )}
         </div>
       </div>
 
-      {/* Style reference — optional */}
+      {/* Style reference */}
       <div>
-        <label className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#A89EC0] mb-1.5">
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#6E6E73', marginBottom: '6px' }}>
           Phong cách tham khảo
-          <span className="normal-case font-normal text-[9px] bg-[#F2F0F7] text-[#A89EC0] px-1.5 py-0.5 rounded-full ml-1">Tuỳ chọn</span>
+          <span style={{ fontSize: '11px', fontWeight: 400, color: '#AEAEB2', marginLeft: '6px' }}>tuỳ chọn</span>
         </label>
-        <input type="text" value={data.style_reference}
+        <input
+          type="text"
+          value={data.style_reference}
           onChange={e => onChange({ style_reference: e.target.value })}
+          onFocus={() => setStyleFocused(true)}
+          onBlur={() => setStyleFocused(false)}
           placeholder="VD: Phong cách Apple, minimalist Nhật Bản, vintage 90s..."
-          maxLength={500} className={inputCls} />
+          maxLength={500}
+          style={{ ...inputBase, ...(styleFocused ? inputFocus : {}) }}
+        />
       </div>
 
-      {/* Optional sections — tabs */}
+      {/* Tabs */}
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#A89EC0]">
-            Tham khảo thêm
-          </label>
-          <span className="text-[9px] text-[#C4BEDD] bg-[#F2F0F7] px-2 py-0.5 rounded-full">Tuỳ chọn — bỏ qua được</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: '#6E6E73' }}>Tham khảo thêm</span>
+          <span style={{ fontSize: '11px', color: '#AEAEB2' }}>tuỳ chọn</span>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex gap-1 p-1 bg-[#F2F0F7] rounded-xl mb-3">
+        {/* Segmented control */}
+        <div style={{
+          display: 'flex',
+          background: 'rgba(0,0,0,0.06)',
+          borderRadius: '9px',
+          padding: '2px',
+          marginBottom: '16px',
+        }}>
           {TABS.map(t => (
-            <button key={t.key} type="button" onClick={() => setTab(t.key)}
-              className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-[10px] font-semibold transition-all
-                ${tab === t.key ? 'bg-white text-[#2D2D3A] shadow-sm' : 'text-[#A89EC0] hover:text-[#6E6488]'}`}>
-              <span>{t.icon}</span>
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setTab(t.key)}
+              style={{
+                flex: 1,
+                padding: '6px 0',
+                borderRadius: '7px',
+                fontSize: '12px',
+                fontWeight: tab === t.key ? 600 : 500,
+                color: tab === t.key ? '#1D1D1F' : '#6E6E73',
+                background: tab === t.key ? '#fff' : 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: tab === t.key ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
+                transition: 'all 0.15s ease',
+              }}
+            >
               {t.label}
             </button>
           ))}
@@ -165,109 +229,187 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
 
         {/* AI Moodboard tab */}
         {tab === 'ai' && (
-          <div className="border-[1.5px] border-[#E4E0EF] rounded-xl overflow-hidden">
+          <div style={{
+            border: '1px solid rgba(0,0,0,0.08)',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            background: '#fff',
+          }}>
             {/* Header */}
-            <div className="px-4 py-3 bg-gradient-to-r from-[#F8F7FD] to-[#F0F0FF] border-b border-[#E4E0EF]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#7B8EF7] to-[#6C6BAE] flex items-center justify-center">
-                    <span className="text-white text-[10px] font-bold">✦</span>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-[#2D2D3A]">AI phân tích phong cách</p>
-                    <p className="text-[9px] text-[#A89EC0]">Mô tả → palette màu + font + tips tự động</p>
-                  </div>
+            <div style={{
+              padding: '14px 16px',
+              borderBottom: '1px solid rgba(0,0,0,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{
+                  width: '28px', height: '28px', borderRadius: '8px',
+                  background: '#5E5CE6',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
                 </div>
-                {moodboard && (
-                  <span className="text-[9px] font-bold text-[#5BB89A] bg-[#E4F5F0] px-2 py-0.5 rounded-full">
-                    ✓ Đã phân tích
-                  </span>
-                )}
+                <div>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#1D1D1F', margin: 0 }}>AI phân tích phong cách</p>
+                  <p style={{ fontSize: '11px', color: '#6E6E73', margin: 0 }}>Palette màu + font + tips tự động</p>
+                </div>
               </div>
+              {moodboard && (
+                <span style={{
+                  fontSize: '11px', fontWeight: 600, color: '#34C759',
+                  background: 'rgba(52,199,89,0.1)', padding: '3px 10px', borderRadius: '20px',
+                }}>
+                  Đã phân tích
+                </span>
+              )}
             </div>
 
-            {/* Style example chips */}
-            <div className="px-4 pt-3 pb-2 border-b border-[#F2F0F7]">
-              <p className="text-[9px] text-[#A89EC0] mb-2 font-semibold">CHỌN NHANH:</p>
-              <div className="flex gap-1.5 flex-wrap">
+            {/* Example chips */}
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+              <p style={{ fontSize: '11px', color: '#AEAEB2', marginBottom: '8px', fontWeight: 500 }}>Chọn nhanh</p>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {STYLE_EXAMPLES.map(ex => (
-                  <button key={ex.label} type="button"
-                    onClick={() => setAiInput(ex.label)}
-                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full border transition-all text-[10px] font-semibold
-                      ${aiInput === ex.label
-                        ? 'border-[#7B8EF7] bg-[#EEF0FE] text-[#7B8EF7]'
-                        : 'border-[#E4E0EF] bg-white text-[#6E6488] hover:border-[#7B8EF7] hover:text-[#7B8EF7]'
-                      }`}>
-                    <span>{ex.emoji}</span>
-                    {ex.label}
+                  <button
+                    key={ex}
+                    type="button"
+                    onClick={() => setAiInput(ex)}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      border: aiInput === ex ? '1px solid #5E5CE6' : '1px solid rgba(0,0,0,0.12)',
+                      background: aiInput === ex ? 'rgba(94,92,230,0.08)' : 'transparent',
+                      color: aiInput === ex ? '#5E5CE6' : '#1D1D1F',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {ex}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Input + Analyze */}
-            <div className="px-4 py-3 border-b border-[#F2F0F7]">
-              <div className="flex gap-2">
-                <input type="text" value={aiInput}
+            {/* Input + button */}
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  value={aiInput}
                   onChange={e => setAiInput(e.target.value)}
+                  onFocus={() => setAiFocused(true)}
+                  onBlur={() => setAiFocused(false)}
                   onKeyDown={e => { if (e.key === 'Enter' && aiInput.trim().length >= 5) handleAnalyze() }}
-                  placeholder="Mô tả phong cách bạn muốn... (VD: tối giản đen trắng)"
-                  className="flex-1 bg-[#FAFAF9] border-[1.5px] border-[#E4E0EF] rounded-xl px-3 py-2 text-[12px] text-[#2D2D3A]
-                    outline-none focus:border-[#7B8EF7] transition-all"
-                  maxLength={500} />
-                <button type="button" onClick={handleAnalyze}
+                  placeholder="Mô tả phong cách bạn muốn..."
+                  maxLength={500}
+                  style={{
+                    flex: 1,
+                    background: 'rgba(0,0,0,0.04)',
+                    border: aiFocused ? '1px solid rgba(94,92,230,0.5)' : '1px solid transparent',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    fontSize: '13px',
+                    color: '#1D1D1F',
+                    fontFamily: 'inherit',
+                    outline: 'none',
+                    boxShadow: aiFocused ? '0 0 0 3px rgba(94,92,230,0.1)' : 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleAnalyze}
                   disabled={aiLoading || aiInput.trim().length < 5}
-                  className={`px-4 h-10 rounded-xl text-[12px] font-bold transition-all shrink-0
-                    ${aiLoading || aiInput.trim().length < 5
-                      ? 'bg-[#D4CEEA] text-white cursor-not-allowed'
-                      : 'bg-gradient-to-r from-[#7B8EF7] to-[#6C6BAE] text-white hover:shadow-[0_4px_12px_rgba(123,142,247,0.4)] hover:-translate-y-0.5 active:translate-y-0'
-                    }`}>
+                  style={{
+                    padding: '0 16px',
+                    height: '38px',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: aiLoading || aiInput.trim().length < 5 ? 'not-allowed' : 'pointer',
+                    background: aiLoading || aiInput.trim().length < 5 ? 'rgba(0,0,0,0.12)' : '#5E5CE6',
+                    color: aiLoading || aiInput.trim().length < 5 ? 'rgba(0,0,0,0.3)' : '#fff',
+                    transition: 'all 0.15s ease',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
                   {aiLoading ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
-                  ) : '✦ Phân tích'}
+                    <>
+                      <div style={{
+                        width: '12px', height: '12px',
+                        border: '2px solid rgba(0,0,0,0.2)',
+                        borderTopColor: 'rgba(0,0,0,0.5)',
+                        borderRadius: '50%',
+                        animation: 'spin 0.6s linear infinite',
+                      }} />
+                      Đang phân tích
+                    </>
+                  ) : 'Phân tích'}
                 </button>
               </div>
-              {aiInput.trim().length > 0 && aiInput.trim().length < 5 && (
-                <p className="text-[9px] text-[#A89EC0] mt-1">Nhập thêm vài từ để AI hiểu ý bạn hơn</p>
-              )}
             </div>
 
-            {/* AI Result */}
-            <div className="px-4 py-3 min-h-[60px]">
+            {/* Result area */}
+            <div style={{ padding: '12px 16px', minHeight: '60px' }}>
               {aiLoading && (
-                <div className="flex items-center gap-2.5 text-[#7B8EF7]">
-                  <div className="w-3.5 h-3.5 border-2 border-[#7B8EF7] border-t-transparent rounded-full animate-spin"/>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#5E5CE6' }}>
+                  <div style={{
+                    width: '14px', height: '14px',
+                    border: '2px solid rgba(94,92,230,0.2)',
+                    borderTopColor: '#5E5CE6',
+                    borderRadius: '50%',
+                    animation: 'spin 0.6s linear infinite',
+                  }} />
                   <div>
-                    <p className="text-[11px] font-semibold">Đang phân tích phong cách...</p>
-                    <p className="text-[9px] text-[#A89EC0] mt-0.5">AI đang tạo palette màu và gợi ý font</p>
+                    <p style={{ fontSize: '13px', fontWeight: 600, margin: 0 }}>Đang phân tích...</p>
+                    <p style={{ fontSize: '11px', color: '#6E6E73', margin: 0 }}>AI đang tạo palette màu và gợi ý font</p>
                   </div>
                 </div>
               )}
               {aiError && (
-                <div className="flex items-start gap-2 text-[#E07A7A]">
-                  <svg className="w-4 h-4 stroke-current fill-none stroke-2 shrink-0 mt-0.5" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+                <div style={{
+                  display: 'flex', alignItems: 'flex-start', gap: '8px',
+                  background: 'rgba(255,59,48,0.06)', borderRadius: '8px', padding: '10px 12px',
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: '1px', flexShrink: 0 }}>
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
                   <div>
-                    <p className="text-[11px] font-semibold">Không thể phân tích</p>
-                    <p className="text-[10px] mt-0.5">{aiError}</p>
-                    {DEV && <p className="text-[9px] text-[#A89EC0] mt-1">Dev mode: bạn có thể bỏ qua bước này</p>}
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: '#FF3B30', margin: 0 }}>Không thể phân tích</p>
+                    <p style={{ fontSize: '11px', color: '#6E6E73', margin: '2px 0 0' }}>{aiError}</p>
+                    {DEV && <p style={{ fontSize: '11px', color: '#AEAEB2', margin: '4px 0 0' }}>Dev mode: có thể bỏ qua bước này</p>}
                   </div>
                 </div>
               )}
               {!aiLoading && !aiError && !moodboard && (
-                <div className="flex items-center gap-2 text-[#C4BEDD]">
-                  <span className="text-base">✦</span>
-                  <p className="text-[11px]">Nhập mô tả và nhấn <strong className="text-[#7B8EF7]">Phân tích</strong> để AI tạo moodboard tự động</p>
-                </div>
+                <p style={{ fontSize: '12px', color: '#AEAEB2', margin: 0 }}>
+                  Nhập mô tả và nhấn <strong style={{ color: '#5E5CE6' }}>Phân tích</strong> để AI tạo moodboard
+                </p>
               )}
               {moodboard && !aiLoading && (
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-[11px] font-bold text-[#2D2D3A]">Kết quả phân tích</p>
-                    <button type="button" onClick={handleAnalyze} disabled={aiLoading}
-                      className="text-[10px] px-2.5 py-1 border border-[#E4E0EF] rounded-lg text-[#6E6488] hover:border-[#7B8EF7] hover:text-[#7B8EF7] transition-all">
-                      🔄 Tạo lại
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 600, color: '#1D1D1F', margin: 0 }}>Kết quả phân tích</p>
+                    <button
+                      type="button"
+                      onClick={handleAnalyze}
+                      disabled={aiLoading}
+                      style={{
+                        padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500,
+                        border: '1px solid rgba(0,0,0,0.12)', background: 'transparent',
+                        color: '#1D1D1F', cursor: 'pointer',
+                      }}
+                    >
+                      Tạo lại
                     </button>
                   </div>
                   <MoodboardPreview moodboard={moodboard} />
@@ -275,12 +417,9 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
               )}
             </div>
 
-            {/* DEV skip note */}
             {DEV && !moodboard && (
-              <div className="px-4 pb-3">
-                <p className="text-[9px] text-[#C4BEDD] text-center">
-                  💡 Dev mode: có thể bỏ qua moodboard và tiếp tục
-                </p>
+              <div style={{ padding: '0 16px 12px', textAlign: 'center' }}>
+                <p style={{ fontSize: '11px', color: '#AEAEB2', margin: 0 }}>Dev mode: có thể bỏ qua moodboard</p>
               </div>
             )}
           </div>
@@ -289,45 +428,68 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
         {/* Upload tab */}
         {tab === 'upload' && (
           <div>
-            <div className="grid grid-cols-4 gap-2">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="relative aspect-square">
+                <div key={i} style={{ aspectRatio: '1', position: 'relative' }}>
                   {uploadedPreviews[i] ? (
-                    <div className="w-full h-full rounded-xl overflow-hidden relative group">
-                      <img src={uploadedPreviews[i]} className="w-full h-full object-cover"/>
-                      <button type="button" onClick={() => removeUpload(i)}
-                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white text-[9px] font-bold
-                          flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div style={{ width: '100%', height: '100%', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
+                      <img src={uploadedPreviews[i]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button
+                        type="button"
+                        onClick={() => removeUpload(i)}
+                        style={{
+                          position: 'absolute', top: '4px', right: '4px',
+                          width: '20px', height: '20px', borderRadius: '50%',
+                          background: 'rgba(0,0,0,0.5)', color: '#fff',
+                          border: 'none', cursor: 'pointer', fontSize: '12px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
                         ×
                       </button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => fileRef.current?.click()}
-                      className="w-full h-full rounded-xl border-2 border-dashed border-[#CEC9E0] bg-[#FAFAF9]
-                        flex flex-col items-center justify-center gap-1 cursor-pointer
-                        hover:border-[#7B8EF7] hover:bg-[#EEF0FE] transition-all group">
-                      <svg className="w-4 h-4 stroke-[#CEC9E0] group-hover:stroke-[#7B8EF7] fill-none stroke-[1.5] transition-colors" viewBox="0 0 24 24">
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      style={{
+                        width: '100%', height: '100%', borderRadius: '10px',
+                        border: '1.5px dashed rgba(0,0,0,0.15)',
+                        background: 'rgba(0,0,0,0.02)',
+                        display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'center', gap: '4px',
+                        cursor: 'pointer', transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#AEAEB2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                       </svg>
-                      <span className="text-[8px] text-[#C4BEDD] group-hover:text-[#7B8EF7] font-semibold transition-colors">
-                        {i === 0 ? 'Thêm ảnh' : ''}
-                      </span>
+                      {i === 0 && <span style={{ fontSize: '10px', color: '#AEAEB2' }}>Thêm</span>}
                     </button>
                   )}
                 </div>
               ))}
             </div>
-            <input ref={fileRef} type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif"
-              className="hidden" onChange={handleFileChange} />
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-[9px] text-[#A89EC0]">
+            <input
+              ref={fileRef}
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
+              <p style={{ fontSize: '11px', color: '#AEAEB2', margin: 0 }}>
                 {uploadedPreviews.length > 0
-                  ? `${uploadedPreviews.length}/8 ảnh đã chọn`
-                  : 'Tối đa 8 ảnh · 10MB/file · jpg/png/webp/gif'}
+                  ? `${uploadedPreviews.length}/8 ảnh`
+                  : 'Tối đa 8 ảnh · 10MB/file · jpg/png/webp'}
               </p>
               {uploadedPreviews.length > 0 && (
-                <button type="button" onClick={() => setUploadedPreviews([])}
-                  className="text-[9px] text-[#E07A7A] hover:underline">
+                <button
+                  type="button"
+                  onClick={() => setUploadedPreviews([])}
+                  style={{ fontSize: '11px', color: '#FF3B30', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
                   Xoá tất cả
                 </button>
               )}
@@ -338,42 +500,55 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
         {/* Color tab */}
         {tab === 'color' && (
           <div>
-            <p className="text-[10px] text-[#A89EC0] mb-3">
-              Chọn tối đa 5 màu chủ đạo {data.primary_colors.length > 0 && `(đang chọn ${data.primary_colors.length}/5)`}
+            <p style={{ fontSize: '12px', color: '#6E6E73', marginBottom: '12px' }}>
+              Chọn tối đa 5 màu chủ đạo
+              {data.primary_colors.length > 0 && ` · ${data.primary_colors.length}/5 đã chọn`}
             </p>
-            <div className="grid grid-cols-4 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
               {COLOR_PRESETS.map(({ hex, name }) => {
                 const isSelected = data.primary_colors.includes(hex)
                 return (
-                  <button key={hex} type="button" onClick={() => toggleColor(hex)}
-                    className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all
-                      ${isSelected
-                        ? 'border-[#7B8EF7] bg-[#EEF0FE] -translate-y-0.5 shadow-md'
-                        : 'border-[#E4E0EF] hover:border-[#C4BEDD] hover:-translate-y-0.5'
-                      }`}>
-                    <div className="w-10 h-10 rounded-xl shadow-sm relative flex items-center justify-center border border-black/5"
-                      style={{ background: hex }}>
+                  <button
+                    key={hex}
+                    type="button"
+                    onClick={() => toggleColor(hex)}
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+                      padding: '10px 8px', borderRadius: '12px',
+                      border: isSelected ? '1.5px solid #5E5CE6' : '1.5px solid transparent',
+                      background: isSelected ? 'rgba(94,92,230,0.06)' : 'rgba(0,0,0,0.03)',
+                      cursor: 'pointer', transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{
+                      width: '36px', height: '36px', borderRadius: '10px',
+                      background: hex, border: '1px solid rgba(0,0,0,0.08)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: isSelected ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
+                    }}>
                       {isSelected && (
-                        <svg className="w-4 h-4 fill-none stroke-2"
-                          style={{ stroke: hex === '#F5F3EF' || hex === '#F4D03F' ? '#2D2D3A' : 'white' }}
-                          viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                          stroke={['#F5F5F7'].includes(hex) ? '#1D1D1F' : '#fff'}>
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
                       )}
                     </div>
-                    <span className="text-[9px] text-[#6E6488] font-medium">{name}</span>
+                    <span style={{ fontSize: '10px', color: '#6E6E73', fontWeight: 500 }}>{name}</span>
                   </button>
                 )
               })}
             </div>
-            {/* Custom color input */}
-            <div className="mt-3 flex items-center gap-2">
-              <input type="color"
+            <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input
+                type="color"
                 onChange={e => {
                   if (data.primary_colors.length < 5 && !data.primary_colors.includes(e.target.value)) {
                     onChange({ primary_colors: [...data.primary_colors, e.target.value] })
                   }
                 }}
-                className="w-8 h-8 rounded-lg border border-[#E4E0EF] cursor-pointer" />
-              <span className="text-[10px] text-[#A89EC0]">Hoặc chọn màu tuỳ chỉnh</span>
+                style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)', cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: '12px', color: '#6E6E73' }}>Chọn màu tuỳ chỉnh</span>
             </div>
           </div>
         )}

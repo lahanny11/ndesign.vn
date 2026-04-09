@@ -6,73 +6,117 @@ interface AppLayoutProps {
   onCreateOrder?: () => void
 }
 
-function getGreeting() {
-  const h = new Date().getHours()
-  if (h < 12) return { text: 'Chào buổi sáng', emoji: '☀️' }
-  if (h < 18) return { text: 'Chào buổi chiều', emoji: '🌤️' }
-  return { text: 'Chào buổi tối', emoji: '🌙' }
+// Apple-style SVG icons — no emoji
+const Icons = {
+  orders: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
+    </svg>
+  ),
+  analytics: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  tools: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  moodboard: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+      <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  feedback: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  bell: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  plus: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
+      <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  search: (
+    <svg viewBox="0 0 24 24" fill="none" className="w-[14px] h-[14px]">
+      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
 }
 
 const navItems = [
-  { label: 'Quản lý Order',  icon: '🎨', active: true },
-  { label: 'Nhật ký dữ liệu', icon: '📊', active: false },
-  { label: 'Công cụ',         icon: '🔧', active: false },
-  { label: 'Moodboard AI',    icon: '✦',  active: false },
-  { label: 'Feedback',        icon: '💬', active: false },
+  { label: 'Order',      icon: Icons.orders,    active: true  },
+  { label: 'Analytics',  icon: Icons.analytics, active: false },
+  { label: 'Tools',      icon: Icons.tools,     active: false },
+  { label: 'Moodboard',  icon: Icons.moodboard, active: false },
+  { label: 'Feedback',   icon: Icons.feedback,  active: false },
 ]
 
 export default function AppLayout({ children, onCreateOrder }: AppLayoutProps) {
   const { data: user } = useCurrentUser()
   const [notifOpen, setNotifOpen] = useState(false)
-  const { text: greetText, emoji: greetEmoji } = getGreeting()
-  const firstName = user?.display_name?.split(' ').pop() ?? 'bạn'
 
   return (
-    <div className="flex h-screen bg-[#f7f7fb] overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-[160px] bg-white border-r border-gray-100 flex flex-col py-6 px-3 gap-2 shrink-0 shadow-sm">
-        {/* Logo + Brand */}
-        <div className="flex flex-col items-center mb-5 gap-1.5">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7B8EF7] to-[#6C6BAE] flex items-center justify-center shadow-md">
-            <span className="text-white text-lg font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>N</span>
-          </div>
-          <span className="text-[10px] font-semibold text-[#A89EC0] tracking-wide">Design Team</span>
+    <div className="flex h-screen overflow-hidden" style={{ background: '#F5F5F7' }}>
+
+      {/* Sidebar — icon only, Apple macOS style */}
+      <aside className="w-[72px] bg-white flex flex-col items-center py-5 gap-1 shrink-0"
+        style={{ borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+        {/* Logo */}
+        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-5 shrink-0"
+          style={{ background: '#5E5CE6' }}>
+          <span className="text-white text-[15px] font-bold" style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.5px' }}>N</span>
         </div>
 
-        {/* Nav */}
-        <nav className="flex flex-col gap-0.5 flex-1">
+        {/* Nav icons */}
+        <nav className="flex flex-col gap-1 flex-1 w-full px-2">
           {navItems.map((item) => (
-            <button
-              key={item.label}
-              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all ${
-                item.active
-                  ? 'bg-gradient-to-r from-[#7B8EF7] to-[#6C6BAE] text-white shadow-sm'
-                  : 'text-gray-400 hover:bg-[#F5F4FC] hover:text-[#6C6BAE]'
-              }`}
-            >
-              <span className="text-[13px]">{item.icon}</span>
-              <span className="text-[11px] font-medium leading-tight">{item.label}</span>
-            </button>
+            <div key={item.label} className="relative group">
+              <button
+                className={`w-full h-11 rounded-[10px] flex items-center justify-center transition-all duration-150
+                  ${item.active
+                    ? 'text-[#5E5CE6]'
+                    : 'text-[#AEAEB2] hover:text-[#3A3A3C] hover:bg-black/[0.04]'
+                  }`}
+                style={item.active ? { background: 'rgba(94,92,230,0.1)' } : {}}
+              >
+                {item.icon}
+              </button>
+              {/* Tooltip */}
+              <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-[#1D1D1F] text-white
+                text-[11px] font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100
+                pointer-events-none transition-opacity z-50 shadow-lg">
+                {item.label}
+                <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#1D1D1F]"/>
+              </div>
+            </div>
           ))}
         </nav>
 
-        {/* Performance widget — humanized */}
-        <div className="bg-gradient-to-br from-[#F0EFFC] to-[#EAE9F7] rounded-xl p-3 border border-[#E4E0EF]">
-          <p className="text-[9px] text-[#7B8EF7] font-bold uppercase tracking-wide mb-0.5">Team Performance</p>
-          <div className="w-full h-1.5 bg-white/60 rounded-full overflow-hidden mb-1">
-            <div className="h-full bg-gradient-to-r from-[#7B8EF7] to-[#5BB89A] rounded-full" style={{ width: '98%' }} />
-          </div>
-          <p className="text-[10px] text-[#6C6BAE] font-bold">98% — Xuất sắc 🏆</p>
-        </div>
-
-        {/* User quick info */}
-        <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-[#F5F4FC]">
-          <div className="w-6 h-6 rounded-full bg-[#7B8EF7] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+        {/* User avatar */}
+        <div className="relative group mt-auto">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-semibold cursor-pointer"
+            style={{ background: '#5E5CE6' }}>
             {user?.display_name?.[0] ?? 'U'}
           </div>
-          <div className="min-w-0">
-            <p className="text-[9px] font-semibold text-[#2D2D3A] truncate">{user?.display_name ?? 'Demo User'}</p>
-            <p className="text-[8px] text-[#A89EC0]">Design Leader</p>
+          <div className="absolute left-full ml-3 bottom-0 px-2.5 py-1.5 bg-[#1D1D1F] text-white
+            text-[11px] font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100
+            pointer-events-none transition-opacity z-50 shadow-lg">
+            {user?.display_name ?? 'Demo User'}
           </div>
         </div>
       </aside>
@@ -80,61 +124,67 @@ export default function AppLayout({ children, onCreateOrder }: AppLayoutProps) {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="h-[54px] bg-white border-b border-gray-100 flex items-center px-6 gap-4 shrink-0 shadow-sm">
-          {/* Greeting */}
-          <div className="flex flex-col justify-center">
-            <p className="text-[11px] text-[#A89EC0] leading-none">{greetText} {greetEmoji}</p>
-            <p className="text-[13px] font-bold text-[#2D2D3A] leading-tight">
-              {firstName}, hôm nay có gì mình giúp được không?
-            </p>
-          </div>
+        <header className="h-[52px] bg-white/80 flex items-center px-6 gap-4 shrink-0"
+          style={{
+            borderBottom: '1px solid rgba(0,0,0,0.08)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+          }}>
+          {/* Page title */}
+          <h1 className="text-[15px] font-semibold text-[#1D1D1F] tracking-tight shrink-0">
+            Quản lý Order
+          </h1>
 
           {/* Search */}
-          <div className="flex-1 max-w-xs mx-4">
+          <div className="flex-1 max-w-[320px] mx-4">
             <div className="relative">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 stroke-[#A89EC0] fill-none stroke-2" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input
-                type="text"
-                placeholder="Tìm dự án của bạn..."
-                className="w-full pl-8 pr-4 py-1.5 text-[12px] bg-[#F5F4FC] border border-[#E4E0EF] rounded-lg
-                  focus:outline-none focus:border-[#7B8EF7] focus:bg-white transition-all placeholder:text-[#C4BEDD]"
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#AEAEB2]">
+                {Icons.search}
+              </span>
+              <input type="text" placeholder="Tìm kiếm..."
+                className="w-full pl-8 pr-3 py-[6px] text-[13px] rounded-[8px] outline-none transition-all
+                  placeholder:text-[#AEAEB2] text-[#1D1D1F]"
+                style={{
+                  background: 'rgba(0,0,0,0.05)',
+                  border: '1px solid transparent',
+                }}
+                onFocus={e => {
+                  e.target.style.background = '#fff'
+                  e.target.style.border = '1px solid rgba(94,92,230,0.4)'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(94,92,230,0.1)'
+                }}
+                onBlur={e => {
+                  e.target.style.background = 'rgba(0,0,0,0.05)'
+                  e.target.style.border = '1px solid transparent'
+                  e.target.style.boxShadow = 'none'
+                }}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-3 ml-auto">
-            {/* Notification bell */}
-            <button
-              onClick={() => setNotifOpen(!notifOpen)}
-              className="relative w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F5F4FC] transition-colors"
-              title="Thông báo mới"
-            >
-              <svg className="w-[18px] h-[18px] stroke-[#6E6488] fill-none stroke-[1.8]" viewBox="0 0 24 24">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#E07A7A] rounded-full animate-pulse" />
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Bell */}
+            <button onClick={() => setNotifOpen(!notifOpen)}
+              className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-[#6E6E73]
+                hover:bg-black/[0.04] transition-colors">
+              {Icons.bell}
+              <span className="absolute top-2 right-2 w-[6px] h-[6px] rounded-full"
+                style={{ background: '#FF3B30' }}/>
             </button>
 
-            {/* Create order CTA — human & warm */}
-            <button
-              onClick={onCreateOrder}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-bold text-white transition-all
-                bg-gradient-to-r from-[#7B8EF7] to-[#6C6BAE] hover:shadow-[0_4px_14px_rgba(123,142,247,0.4)]
-                hover:-translate-y-[1px] active:translate-y-0 shadow-sm"
-            >
-              <svg className="w-3.5 h-3.5 stroke-white fill-none stroke-[2.5]" viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              Gửi yêu cầu thiết kế
+            {/* Create order */}
+            <button onClick={onCreateOrder}
+              className="flex items-center gap-1.5 h-9 px-4 rounded-[10px] text-[13px] font-semibold text-white
+                transition-all hover:opacity-90 active:scale-[0.97]"
+              style={{ background: '#5E5CE6' }}>
+              {Icons.plus}
+              Tạo order
             </button>
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-auto p-5">
+        {/* Content */}
+        <main className="flex-1 overflow-auto p-6">
           {children}
         </main>
       </div>

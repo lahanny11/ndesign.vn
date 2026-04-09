@@ -8,16 +8,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../../../shared/config/api-client'
 import { useCurrentUser } from '../../../shared/hooks/useCurrentUser'
 
-interface Props {
-  open: boolean
-  onClose: () => void
-}
+interface Props { open: boolean; onClose: () => void }
 
 const STEPS = [
-  { label: 'Thông tin',       emoji: '👤', subtitle: 'Cho mình biết bạn cần gì nhé!' },
-  { label: 'Loại sản phẩm',   emoji: '🎨', subtitle: 'Chọn định dạng phù hợp với dự án' },
-  { label: 'Nội dung brief',  emoji: '✍️',  subtitle: 'Mô tả để designer hiểu đúng ý bạn 💡' },
-  { label: 'Xác nhận gửi',    emoji: '🚀', subtitle: 'Kiểm tra lại rồi gửi thôi!' },
+  { label: 'Thông tin',      sub: 'Thông tin cơ bản về dự án' },
+  { label: 'Sản phẩm',       sub: 'Loại thiết kế cần thực hiện' },
+  { label: 'Brief',          sub: 'Mô tả yêu cầu chi tiết' },
+  { label: 'Xác nhận',       sub: 'Kiểm tra và gửi' },
 ]
 
 const EMPTY: OrderFormData = {
@@ -41,25 +38,18 @@ export default function OrderFormModal({ open, onClose }: Props) {
     queryKey: ['product-types'],
     queryFn: () => apiClient.get<{ id: string; name: string; slug: string; standard_sizes: { name: string; width: number; height: number; unit: 'px'|'mm' }[] }[]>('/api/v1/meta/product-types'),
   })
-
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: () => apiClient.get<{ id: string; name: string; slug: string }[]>('/api/v1/meta/teams'),
   })
 
   useEffect(() => {
-    if (user) {
-      setForm(f => ({
-        ...f,
-        step1: { ...f.step1, orderer_name: user.display_name, team_id: user.team?.id ?? '' },
-      }))
-    }
+    if (user) setForm(f => ({ ...f, step1: { ...f.step1, orderer_name: user.display_name, team_id: user.team?.id ?? '' } }))
   }, [user])
 
   const submitMutation = useMutation({
     mutationFn: () => apiClient.post<{ order_number: string }>('/api/v1/orders', {
-      ...form.step1, ...form.step2, ...form.step3,
-      draft_order_id: form.draft_order_id,
+      ...form.step1, ...form.step2, ...form.step3, draft_order_id: form.draft_order_id,
     }),
     onSuccess: (res) => {
       setOrderNumber(res.order_number)
@@ -67,38 +57,34 @@ export default function OrderFormModal({ open, onClose }: Props) {
       qc.invalidateQueries({ queryKey: ['orders'] })
       qc.invalidateQueries({ queryKey: ['dashboard-stats'] })
     },
-    onError: (err: { code?: string; message?: string }) => {
-      setError(err?.message ?? 'Có lỗi xảy ra. Vui lòng thử lại.')
-    },
+    onError: (err: { message?: string }) => setError(err?.message ?? 'Có lỗi xảy ra.'),
   })
 
   const upd1 = (d: Partial<OrderFormStep1>) => setForm(f => ({ ...f, step1: { ...f.step1, ...d } }))
   const upd2 = (d: Partial<OrderFormStep2>) => setForm(f => ({ ...f, step2: { ...f.step2, ...d } }))
   const upd3 = (d: Partial<OrderFormStep3>) => setForm(f => ({ ...f, step3: { ...f.step3, ...d } }))
 
-  // Validation + hints
-  const getStepValidation = (): { ok: boolean; hint: string } => {
+  const getValidation = () => {
     if (step === 0) {
-      if (!form.step1.task_name.trim()) return { ok: false, hint: '📝 Nhập tên dự án để tiếp tục' }
-      if (form.step1.task_name.length < 3) return { ok: false, hint: '📝 Tên dự án cần ít nhất 3 ký tự' }
-      if (!form.step1.team_id) return { ok: false, hint: '👥 Chọn team của bạn' }
-      if (!form.step1.deadline) return { ok: false, hint: '📅 Chọn deadline cho dự án' }
-      return { ok: true, hint: '✓ Sẵn sàng qua bước tiếp theo!' }
+      if (!form.step1.task_name.trim() || form.step1.task_name.length < 3) return { ok: false, hint: 'Nhập tên dự án để tiếp tục' }
+      if (!form.step1.team_id) return { ok: false, hint: 'Chọn team của bạn' }
+      if (!form.step1.deadline) return { ok: false, hint: 'Chọn deadline cho dự án' }
+      return { ok: true, hint: '' }
     }
     if (step === 1) {
-      if (!form.step2.product_type_id) return { ok: false, hint: '🎨 Chọn loại sản phẩm cần thiết kế' }
-      if (!form.step2.product_size_name) return { ok: false, hint: '📐 Chọn kích thước cho sản phẩm' }
-      return { ok: true, hint: '✓ Đã chọn: ' + form.step2.product_type_name + ' — ' + form.step2.product_size_name }
+      if (!form.step2.product_type_id) return { ok: false, hint: 'Chọn loại sản phẩm' }
+      if (!form.step2.product_size_name) return { ok: false, hint: 'Chọn kích thước' }
+      return { ok: true, hint: '' }
     }
     if (step === 2) {
-      if (form.step3.brief_text.length < 10) return { ok: false, hint: `✍️ Brief cần ít nhất 10 ký tự (đang có ${form.step3.brief_text.length})` }
-      if (!DEV && !form.step3.moodboard_id) return { ok: false, hint: '✦ Nhấn Phân tích AI để tạo moodboard' }
-      return { ok: true, hint: '✓ Brief đã đầy đủ — sẵn sàng xác nhận!' }
+      if (form.step3.brief_text.length < 10) return { ok: false, hint: `Cần thêm ${10 - form.step3.brief_text.length} ký tự cho brief` }
+      if (!DEV && !form.step3.moodboard_id) return { ok: false, hint: 'Tạo AI Moodboard trước khi tiếp tục' }
+      return { ok: true, hint: '' }
     }
-    return { ok: true, hint: '🚀 Nhấn gửi để design team nhận ngay!' }
+    return { ok: true, hint: '' }
   }
 
-  const { ok: canNext, hint: validationHint } = getStepValidation()
+  const { ok: canNext, hint } = getValidation()
 
   const handleNext = () => {
     if (step < 3) setStep(s => s + 1)
@@ -112,185 +98,153 @@ export default function OrderFormModal({ open, onClose }: Props) {
   }
 
   const teamName = teams.find(t => t.id === form.step1.team_id)?.name ?? ''
-  const progressPct = ((step + 1) / 4) * 100
-
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 bg-[rgba(45,45,58,0.55)] z-[80] flex items-center justify-center px-4 py-6 overflow-y-auto backdrop-blur-[3px]">
-      <div className="bg-white rounded-2xl w-full max-w-[600px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.28)] relative">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+      <div className="bg-white rounded-2xl w-full max-w-[560px] overflow-hidden flex flex-col"
+        style={{
+          boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.08)',
+          maxHeight: 'calc(100vh - 48px)',
+        }}>
 
         {/* Header */}
-        <div className="px-6 pt-5 pb-3 border-b border-[#F0EFF8]">
-          <div className="flex items-start justify-between mb-3">
+        <div className="px-6 py-5 flex items-center justify-between shrink-0"
+          style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+          {submitted ? (
+            <p className="text-[15px] font-semibold text-[#1D1D1F]">Đã gửi thành công</p>
+          ) : (
             <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#7B8EF7] to-[#6C6BAE] flex items-center justify-center shrink-0">
-                  <svg className="w-3 h-3 stroke-white fill-none stroke-[2.5]" viewBox="0 0 24 24">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                  </svg>
-                </div>
-                <span className="text-[15px] font-bold tracking-tight text-[#2D2D3A]">
-                  {submitted ? '🎉 Đã gửi thành công!' : 'Yêu cầu thiết kế mới'}
-                </span>
-              </div>
-              {!submitted && (
-                <p className="text-[11px] text-[#A89EC0] ml-8">{STEPS[step].subtitle}</p>
-              )}
-            </div>
-            <button onClick={handleClose}
-              className="w-7 h-7 rounded-full border border-[#E4E0EF] flex items-center justify-center text-[#A89EC0]
-                hover:bg-[#F2F0F7] hover:text-[#2D2D3A] transition-all shrink-0 ml-2">
-              <svg className="w-3 h-3 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
-
-          {/* Progress bar */}
-          {!submitted && (
-            <div className="h-[3px] bg-[#F2F0F7] rounded-full overflow-hidden">
-              <div className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #7B8EF7, #5BB89A)' }}/>
+              <p className="text-[15px] font-semibold text-[#1D1D1F]">{STEPS[step].label}</p>
+              <p className="text-[12px] text-[#AEAEB2] mt-0.5">{STEPS[step].sub}</p>
             </div>
           )}
+          <button onClick={handleClose}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[#AEAEB2] hover:text-[#6E6E73] transition-colors"
+            style={{ background: 'rgba(0,0,0,0.06)' }}>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
 
         {/* Step indicator */}
         {!submitted && (
-          <div className="flex border-b border-[#F0EFF8]">
+          <div className="px-6 py-3 flex items-center gap-2 shrink-0"
+            style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', background: 'rgba(0,0,0,0.02)' }}>
             {STEPS.map((s, i) => (
-              <div key={i}
-                className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 px-1 relative transition-all
-                  ${i === step ? 'bg-[#FAFAFE]' : ''}`}>
-                {/* connector line */}
-                {i < STEPS.length - 1 && (
-                  <div className={`absolute right-0 top-1/2 -translate-y-1/2 w-px h-6
-                    ${i < step ? 'bg-[#5BB89A]' : 'bg-[#E4E0EF]'}`}/>
-                )}
-                <div className={`w-[20px] h-[20px] rounded-full border-2 flex items-center justify-center text-[8px] font-bold transition-all
-                  ${i === step ? 'bg-[#7B8EF7] border-[#7B8EF7] text-white scale-110'
-                    : i < step ? 'bg-[#5BB89A] border-[#5BB89A] text-white'
-                    : 'border-[#D4CEEA] text-[#A89EC0]'}`}>
-                  {i < step ? '✓' : s.emoji}
+              <div key={i} className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold transition-all
+                    ${i === step ? 'text-white' : i < step ? 'text-white' : 'text-[#AEAEB2]'}`}
+                    style={{
+                      background: i === step ? '#5E5CE6' : i < step ? '#34C759' : 'rgba(0,0,0,0.08)',
+                    }}>
+                    {i < step ? (
+                      <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                      </svg>
+                    ) : i + 1}
+                  </div>
+                  <span className={`text-[11px] font-medium transition-all
+                    ${i === step ? 'text-[#1D1D1F]' : i < step ? 'text-[#34C759]' : 'text-[#AEAEB2]'}`}>
+                    {s.label}
+                  </span>
                 </div>
-                <span className={`text-[9px] font-semibold text-center leading-tight transition-all
-                  ${i === step ? 'text-[#7B8EF7]' : i < step ? 'text-[#5BB89A]' : 'text-[#C4BEDD]'}`}>
-                  {s.label}
-                </span>
+                {i < STEPS.length - 1 && (
+                  <div className="w-6 h-px" style={{ background: 'rgba(0,0,0,0.1)' }}/>
+                )}
               </div>
             ))}
           </div>
         )}
 
-        {/* Body */}
-        {submitted ? (
-          <div className="flex flex-col items-center px-6 py-10 text-center">
-            <div className="relative mb-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7B8EF7] to-[#5BB89A] flex items-center justify-center
-                shadow-[0_8px_24px_rgba(123,142,247,0.35)]">
-                <svg className="w-7 h-7 stroke-white fill-none stroke-[2.5]" viewBox="0 0 24 24">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              </div>
-              <div className="absolute -top-1 -right-2 text-xl">🎉</div>
-            </div>
-            <h3 className="text-[20px] font-bold tracking-tight text-[#2D2D3A] mb-1">Yêu cầu đã được gửi!</h3>
-            <p className="text-[12px] text-[#6E6488] leading-relaxed max-w-[280px] mb-1">
-              Design team đã nhận được và sẽ xác nhận brief với bạn sớm nhất có thể.
-            </p>
-            <p className="text-[11px] text-[#A89EC0]">Thường trong vòng 2–4 giờ làm việc ⏰</p>
-
-            <div className="mt-4 px-5 py-2.5 rounded-xl border border-[rgba(123,142,247,0.25)] bg-[#EEF0FE]">
-              <p className="text-[9px] text-[#A89EC0] mb-0.5">Mã yêu cầu của bạn</p>
-              <p className="text-[14px] text-[#7B8EF7] font-bold font-mono tracking-widest">{orderNumber}</p>
-            </div>
-            <p className="text-[9px] text-[#A89EC0] mt-1.5">Dùng mã này để theo dõi tiến độ trên dashboard</p>
-
-            <div className="flex gap-2 mt-6">
-              <button onClick={handleClose}
-                className="px-4 py-2.5 border-[1.5px] border-[#E4E0EF] rounded-xl text-[12px] font-bold text-[#6E6488]
-                  hover:border-[#A89EC0] transition-all">
-                Xem dashboard
-              </button>
-              <button onClick={() => { setStep(0); setSubmitted(false); setForm({ ...EMPTY, draft_order_id: crypto.randomUUID() }) }}
-                className="px-5 py-2.5 bg-gradient-to-r from-[#7B8EF7] to-[#6C6BAE] text-white rounded-xl text-[12px] font-bold
-                  hover:shadow-[0_4px_14px_rgba(123,142,247,0.4)] hover:-translate-y-0.5 transition-all">
-                ✦ Gửi yêu cầu mới
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="px-6 py-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 280px)' }}>
-            {step === 0 && <Step1BasicInfo data={form.step1} onChange={upd1} teams={teams} currentUserName={user?.display_name ?? ''} />}
-            {step === 1 && <Step2ProductType data={form.step2} onChange={upd2} productTypes={productTypes} />}
-            {step === 2 && <Step3Brief data={form.step3} onChange={upd3} draftOrderId={form.draft_order_id} />}
-            {step === 3 && <Step4Confirm data={form} teamName={teamName} />}
+        {/* Progress bar */}
+        {!submitted && (
+          <div className="h-[2px] shrink-0" style={{ background: 'rgba(0,0,0,0.06)' }}>
+            <div className="h-full transition-all duration-500"
+              style={{ width: `${((step + 1) / 4) * 100}%`, background: '#5E5CE6' }}/>
           </div>
         )}
+
+        {/* Body */}
+        <div className="overflow-y-auto flex-1">
+          {submitted ? (
+            <div className="flex flex-col items-center px-6 py-12 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                style={{ background: 'rgba(52,199,89,0.1)' }}>
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" stroke="#34C759" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-[20px] font-bold text-[#1D1D1F] tracking-tight">Order đã được gửi</p>
+              <p className="text-[13px] text-[#6E6E73] mt-2 max-w-[260px] leading-relaxed">
+                Design team đã nhận được yêu cầu và sẽ xác nhận trong vòng 2–4 giờ.
+              </p>
+              <div className="mt-5 px-5 py-3 rounded-xl"
+                style={{ background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.06)' }}>
+                <p className="text-[10px] text-[#AEAEB2] mb-1">Mã order</p>
+                <p className="text-[15px] font-bold text-[#1D1D1F] font-mono tracking-widest">{orderNumber}</p>
+              </div>
+              <div className="flex gap-2 mt-6">
+                <button onClick={handleClose}
+                  className="px-4 py-2 rounded-[10px] text-[13px] font-medium text-[#6E6E73] transition-colors"
+                  style={{ background: 'rgba(0,0,0,0.06)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.1)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}>
+                  Về dashboard
+                </button>
+                <button onClick={() => { setStep(0); setSubmitted(false); setForm({ ...EMPTY, draft_order_id: crypto.randomUUID() }) }}
+                  className="px-4 py-2 rounded-[10px] text-[13px] font-semibold text-white transition-all hover:opacity-90"
+                  style={{ background: '#5E5CE6' }}>
+                  Tạo order mới
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="px-6 py-5">
+              {step === 0 && <Step1BasicInfo data={form.step1} onChange={upd1} teams={teams} currentUserName={user?.display_name ?? ''} />}
+              {step === 1 && <Step2ProductType data={form.step2} onChange={upd2} productTypes={productTypes} />}
+              {step === 2 && <Step3Brief data={form.step3} onChange={upd3} draftOrderId={form.draft_order_id} />}
+              {step === 3 && <Step4Confirm data={form} teamName={teamName} />}
+            </div>
+          )}
+        </div>
 
         {/* Footer */}
         {!submitted && (
-          <div className="border-t border-[#F0EFF8] bg-[#FAFAFA]">
-            {/* Validation hint */}
-            <div className={`px-6 py-2 text-[10px] font-semibold transition-all
-              ${canNext ? 'text-[#5BB89A]' : 'text-[#A89EC0]'}`}>
-              {validationHint}
-            </div>
-
-            <div className="flex gap-2 px-6 pb-4">
+          <div className="px-6 py-4 shrink-0"
+            style={{ borderTop: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.02)' }}>
+            {!canNext && hint && (
+              <p className="text-[11px] text-[#AEAEB2] mb-3 text-center">{hint}</p>
+            )}
+            <div className="flex gap-2">
               {step > 0 && (
                 <button onClick={() => setStep(s => s - 1)}
-                  className="px-4 h-11 bg-white border-[1.5px] border-[#E4E0EF] rounded-xl text-[12px] font-bold text-[#6E6488]
-                    hover:border-[#A89EC0] hover:text-[#2D2D3A] active:scale-95 transition-all">
-                  ← Quay lại
+                  className="px-4 h-10 rounded-[10px] text-[13px] font-medium text-[#1D1D1F] transition-colors"
+                  style={{ background: 'rgba(0,0,0,0.06)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.1)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}>
+                  Quay lại
                 </button>
               )}
-              <button
-                onClick={handleNext}
-                disabled={!canNext || submitMutation.isPending}
-                className={`flex-1 h-11 rounded-xl text-[13px] font-bold text-white flex items-center justify-center gap-2
-                  transition-all active:scale-[0.98]
-                  ${canNext && !submitMutation.isPending
-                    ? 'bg-gradient-to-r from-[#7B8EF7] to-[#6C6BAE] hover:shadow-[0_4px_16px_rgba(123,142,247,0.45)] hover:-translate-y-[1px]'
-                    : 'bg-[#CEC9E0] cursor-not-allowed'
-                  }`}
-              >
+              <button onClick={handleNext} disabled={!canNext || submitMutation.isPending}
+                className="flex-1 h-10 rounded-[10px] text-[13px] font-semibold text-white flex items-center justify-center gap-2
+                  transition-all active:scale-[0.98]"
+                style={{
+                  background: canNext && !submitMutation.isPending ? '#5E5CE6' : 'rgba(0,0,0,0.12)',
+                  cursor: canNext && !submitMutation.isPending ? 'pointer' : 'not-allowed',
+                }}>
                 {submitMutation.isPending ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
-                    Đang gửi đến design team...
-                  </>
-                ) : step === 3 ? (
-                  <>
-                    <svg className="w-4 h-4 stroke-white fill-none stroke-2" viewBox="0 0 24 24">
-                      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                    Gửi đến Design Team
-                  </>
-                ) : (
-                  <>
-                    Tiếp theo
-                    <svg className="w-3.5 h-3.5 stroke-white fill-none stroke-[2.5]" viewBox="0 0 24 24">
-                      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                  </>
-                )}
+                  <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>Đang gửi...</>
+                ) : step === 3 ? 'Gửi order' : 'Tiếp theo'}
               </button>
             </div>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="mx-6 mb-4 px-4 py-3 bg-[#FFF5F5] border border-[#FECACA] rounded-xl flex items-start gap-2">
-            <svg className="w-4 h-4 stroke-[#E07A7A] fill-none stroke-2 shrink-0 mt-0.5" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <div>
-              <p className="text-[11px] font-bold text-[#E07A7A]">Có lỗi xảy ra</p>
-              <p className="text-[10px] text-[#E07A7A] mt-0.5">{error}</p>
-            </div>
+            {error && (
+              <p className="text-[11px] mt-2 text-center" style={{ color: '#FF3B30' }}>{error}</p>
+            )}
           </div>
         )}
       </div>

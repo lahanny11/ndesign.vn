@@ -7,41 +7,40 @@ interface Props {
   flagCount: number
 }
 
-const TABS: { key: FilterTab; label: string; warn?: boolean }[] = [
-  { key: 'all',     label: 'Tất cả dự án' },
-  { key: 'pending', label: 'Chờ designer nhận' },
-  { key: 'active',  label: 'Đang được thiết kế' },
-  { key: 'done',    label: 'Đã hoàn thành ✓' },
-  { key: 'flag',    label: 'Cần chú ý', warn: true },
+const TABS: { key: FilterTab; label: string; danger?: boolean }[] = [
+  { key: 'all',     label: 'Tất cả' },
+  { key: 'pending', label: 'Chờ nhận' },
+  { key: 'active',  label: 'Đang chạy' },
+  { key: 'done',    label: 'Hoàn thành' },
+  { key: 'flag',    label: 'Cần chú ý', danger: true },
 ]
 
 export default function FilterTabs({ active, onChange, total, flagCount }: Props) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-4">
         <div>
-          <h3 className="text-[14px] font-bold tracking-tight text-[#2D2D3A]">Dự án của bạn</h3>
-          <p className="text-[10px] text-[#A89EC0] mt-0.5">
-            {total > 0 ? `${total} dự án · Team đang xử lý` : 'Chưa có dự án nào'}
-          </p>
+          <h2 className="text-[17px] font-semibold text-[#1D1D1F] tracking-tight">Danh sách order</h2>
+          <p className="text-[12px] text-[#AEAEB2] mt-0.5">{total} order</p>
         </div>
-        <div className="flex gap-0.5 bg-white border border-[#E4E0EF] rounded-xl p-1 shadow-sm">
+
+        {/* Tab pills — Apple Segmented Control style */}
+        <div className="flex items-center gap-1 p-1 rounded-[10px]"
+          style={{ background: 'rgba(0,0,0,0.06)' }}>
           {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => onChange(tab.key)}
-              className={`px-3 py-1.5 rounded-[8px] text-[11px] font-semibold transition-all whitespace-nowrap
+            <button key={tab.key} onClick={() => onChange(tab.key)}
+              className={`relative px-3.5 py-1.5 rounded-[8px] text-[12px] font-medium transition-all duration-150
                 ${active === tab.key
-                  ? 'bg-gradient-to-r from-[#7B8EF7] to-[#6C6BAE] text-white shadow-sm'
-                  : tab.warn
-                    ? 'text-[#E8925A] hover:bg-[#FFF7ED]'
-                    : 'text-[#6E6488] hover:bg-[#F5F4FC] hover:text-[#2D2D3A]'
+                  ? 'text-[#1D1D1F] shadow-sm'
+                  : tab.danger
+                    ? 'text-[#FF3B30] hover:text-[#FF3B30]/80'
+                    : 'text-[#6E6E73] hover:text-[#3A3A3C]'
                 }`}
-            >
+              style={active === tab.key ? { background: '#fff' } : {}}>
               {tab.label}
               {tab.key === 'flag' && flagCount > 0 && (
-                <span className={`ml-1.5 text-[8px] font-bold px-1.5 py-0.5 rounded-full
-                  ${active === 'flag' ? 'bg-white/25 text-white' : 'bg-[#FDE8C8] text-[#E8925A]'}`}>
+                <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full
+                  ${active === 'flag' ? 'bg-[#FF3B30]/10 text-[#FF3B30]' : 'bg-[#FF3B30]/10 text-[#FF3B30]'}`}>
                   {flagCount}
                 </span>
               )}

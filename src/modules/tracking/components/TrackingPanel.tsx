@@ -182,7 +182,7 @@ export default function TrackingPanel({ order, open, onClose }: Props) {
                 <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
               </svg>
               <div>
-                <b className="block mb-1">🚨 Cờ đỏ — Cần can thiệp ngay</b>
+                <b className="block mb-1">Cờ đỏ — Cần can thiệp ngay</b>
                 <ul className="list-disc pl-3 flex flex-col gap-0.5">
                   {order.redFlags.map((f, i) => <li key={i}>{f}</li>)}
                 </ul>
@@ -196,7 +196,7 @@ export default function TrackingPanel({ order, open, onClose }: Props) {
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
               <div>
-                <b className="block mb-1">⚠ Cảnh báo</b>
+                <b className="block mb-1">Cảnh báo</b>
                 <ul className="list-disc pl-3 flex flex-col gap-0.5">
                   {order.redFlags.map((f, i) => <li key={i}>{f}</li>)}
                 </ul>

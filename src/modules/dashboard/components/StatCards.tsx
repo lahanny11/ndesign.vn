@@ -5,126 +5,89 @@ interface Props {
   loading?: boolean
 }
 
-function StatCard({ label, sub, value, icon, badge, badgeColor, accent, pulse }: {
+interface CardProps {
   label: string
-  sub?: string
   value: string | number
-  icon: React.ReactNode
-  badge: string
-  badgeColor: 'up' | 'dn' | 'warn' | 'acc' | 'neutral'
+  sub: string
+  trend?: string
+  trendUp?: boolean
   accent?: boolean
-  pulse?: boolean
-}) {
-  const badgeStyle = {
-    up:      'bg-[#E4F5F0] text-[#5BB89A]',
-    dn:      'bg-[#FDEEEE] text-[#E07A7A]',
-    warn:    'bg-[#FFF0E8] text-[#E8925A]',
-    acc:     'bg-white/25 text-white',
-    neutral: 'bg-[#F2F0F7] text-[#6E6488]',
-  }[badgeColor]
+  alert?: boolean
+}
 
-  if (accent) return (
-    <div className="rounded-2xl overflow-hidden relative"
-      style={{ background: 'linear-gradient(135deg, #7B8EF7 0%, #6C6BAE 100%)' }}>
-      {/* Decorative circles */}
-      <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/10" />
-      <div className="absolute -bottom-3 -left-3 w-14 h-14 rounded-full bg-white/8" />
-      <div className="relative p-3.5">
-        <div className="flex items-center justify-between mb-2">
-          <div className="w-8 h-8 rounded-[9px] bg-white/20 flex items-center justify-center">
-            {icon}
-          </div>
-          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badgeStyle}`}>{badge}</span>
-        </div>
-        <div className="text-[22px] font-bold tracking-tight text-white leading-none mb-0.5">{value}</div>
-        <div className="text-[10px] text-white/80 font-semibold">{label}</div>
-        {sub && <div className="text-[9px] text-white/55 mt-0.5">{sub}</div>}
-      </div>
-    </div>
-  )
-
+function StatCard({ label, value, sub, trend, trendUp, accent, alert }: CardProps) {
   return (
-    <div className={`rounded-2xl border bg-white p-3.5 relative overflow-hidden transition-all hover:shadow-sm
-      ${pulse ? 'border-[#FECACA]' : 'border-[#E4E0EF]'}`}>
-      {pulse && <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#E07A7A] to-[#E8925A]" />}
-      <div className="flex items-center justify-between mb-2">
-        <div className={`w-8 h-8 rounded-[9px] flex items-center justify-center
-          ${pulse ? 'bg-[#FFF0EE]' : 'bg-[#F2F0F7]'}`}>
-          {icon}
-        </div>
-        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badgeStyle}`}>{badge}</span>
+    <div className="bg-white rounded-2xl p-5 flex flex-col gap-3"
+      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)' }}>
+      <div className="flex items-start justify-between">
+        <p className="text-[13px] font-medium text-[#6E6E73]">{label}</p>
+        {trend && (
+          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full
+            ${trendUp ? 'text-[#34C759] bg-[#34C759]/10' : 'text-[#FF9F0A] bg-[#FF9F0A]/10'}`}>
+            {trend}
+          </span>
+        )}
+        {alert && (
+          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full text-[#FF3B30] bg-[#FF3B30]/8">
+            Cần xử lý
+          </span>
+        )}
       </div>
-      <div className="text-[22px] font-bold tracking-tight text-[#2D2D3A] leading-none mb-0.5">{value}</div>
-      <div className="text-[10px] text-[#6E6488] font-semibold">{label}</div>
-      {sub && <div className="text-[9px] text-[#A89EC0] mt-0.5">{sub}</div>}
+
+      <div>
+        <p className={`text-[32px] font-bold tracking-tight leading-none
+          ${accent ? 'text-[#5E5CE6]' : alert ? 'text-[#FF3B30]' : 'text-[#1D1D1F]'}`}>
+          {value}
+        </p>
+        <p className="text-[12px] text-[#AEAEB2] mt-1.5">{sub}</p>
+      </div>
     </div>
   )
 }
 
 export default function StatCards({ stats, loading }: Props) {
   if (loading) return (
-    <div className="grid grid-cols-4 gap-2.5">
+    <div className="grid grid-cols-4 gap-3">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="rounded-2xl border border-[#E4E0EF] bg-white p-3.5 h-24 animate-pulse" />
+        <div key={i} className="bg-white rounded-2xl h-[108px] animate-pulse"
+          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}/>
       ))}
     </div>
   )
 
   const avgRevision = stats.total_orders > 0
     ? (stats.in_progress_count / Math.max(stats.total_orders, 1) * 2.3).toFixed(1)
-    : '0'
+    : '0.0'
 
   return (
-    <div className="grid grid-cols-4 gap-2.5">
+    <div className="grid grid-cols-4 gap-3">
       <StatCard
-        label="Đang được chăm sóc"
-        sub={`Tổng ${stats.total_orders} dự án`}
+        label="Đang thực hiện"
         value={stats.in_progress_count}
-        badge="+12% tháng này"
-        badgeColor="acc"
+        sub={`Tổng ${stats.total_orders} order`}
+        trend="+12%"
+        trendUp
         accent
-        icon={
-          <svg className="w-4 h-4 stroke-white fill-none stroke-[2]" viewBox="0 0 24 24">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        }
       />
       <StatCard
-        label="Ra mắt thành công ✨"
-        sub="Hoàn thành tháng này"
+        label="Hoàn thành tháng này"
         value={stats.done_count}
-        badge={`+${stats.done_count} dự án`}
-        badgeColor="up"
-        icon={
-          <svg className="w-4 h-4 stroke-[#5BB89A] fill-none stroke-2" viewBox="0 0 24 24">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        }
+        sub="Đã bàn giao thành công"
+        trend={`+${stats.done_count}`}
+        trendUp
       />
       <StatCard
-        label="Cần được hỗ trợ thêm"
-        sub="Team đang theo dõi sát"
+        label="Cần hỗ trợ"
         value={stats.active_red_flag_orders}
-        badge={stats.active_red_flag_orders > 0 ? 'Cần chú ý' : 'Ổn định 👍'}
-        badgeColor={stats.active_red_flag_orders > 0 ? 'warn' : 'up'}
-        pulse={stats.active_red_flag_orders > 0}
-        icon={
-          <svg className="w-4 h-4 stroke-[#E8925A] fill-none stroke-2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-        }
+        sub="Order đang có vấn đề"
+        alert={stats.active_red_flag_orders > 0}
       />
       <StatCard
-        label="Revision trung bình"
-        sub="Mục tiêu ≤ 2 lần"
+        label="Avg. Revision"
         value={`${avgRevision}x`}
-        badge={Number(avgRevision) <= 2 ? 'Tốt lắm! 🎯' : 'Cần cải thiện'}
-        badgeColor={Number(avgRevision) <= 2 ? 'up' : 'warn'}
-        icon={
-          <svg className="w-4 h-4 stroke-[#6E6488] fill-none stroke-2" viewBox="0 0 24 24">
-            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
-          </svg>
-        }
+        sub="Mục tiêu dưới 2 lần"
+        trend={Number(avgRevision) <= 2 ? 'On track' : 'Over target'}
+        trendUp={Number(avgRevision) <= 2}
       />
     </div>
   )
