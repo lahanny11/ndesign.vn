@@ -40,7 +40,12 @@ export default function OrderFormModal({ open, onClose }: Props) {
   })
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
-    queryFn: () => apiClient.get<{ id: string; name: string; slug: string }[]>('/api/v1/meta/teams'),
+    queryFn: () => apiClient.get<{ id: string; name: string; slug: string; group?: string }[]>('/api/v1/meta/teams'),
+  })
+
+  const { data: orderers = [] } = useQuery({
+    queryKey: ['orderers'],
+    queryFn: () => apiClient.get<{ id: string; display_name: string; team_id: string; team_name: string; role: string }[]>('/api/v1/users/orderers'),
   })
 
   useEffect(() => {
@@ -205,7 +210,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
             </div>
           ) : (
             <div className="px-6 py-5">
-              {step === 0 && <Step1BasicInfo data={form.step1} onChange={upd1} teams={teams} currentUserName={user?.display_name ?? ''} />}
+              {step === 0 && <Step1BasicInfo data={form.step1} onChange={upd1} teams={teams} orderers={orderers} />}
               {step === 1 && <Step2ProductType data={form.step2} onChange={upd2} productTypes={productTypes} />}
               {step === 2 && <Step3Brief data={form.step3} onChange={upd3} draftOrderId={form.draft_order_id} />}
               {step === 3 && <Step4Confirm data={form} teamName={teamName} />}

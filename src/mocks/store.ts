@@ -100,13 +100,15 @@ export const mockOrders: MockOrder[] = [
 
 // Map: team-id → team-name (dùng khi tạo order mới)
 export const TEAM_MAP: Record<string, string> = {
-  'team-1': 'Admin Nhile',
-  'team-2': 'Nedu',
-  'team-3': 'Edit',
-  'team-4': 'IT',
-  'team-5': 'Ms Nhi',
-  'team-6': 'Content',
-  'team-7': 'NLT',
+  'team-academy': 'Academy',
+  'team-admin':   'Admin',
+  'team-design':  'Design',
+  'team-edit':    'Edit',
+  'team-hr':      'HR',
+  'team-it':      'IT',
+  'team-ndata':   'N-Data',
+  'team-social':  'Social Content',
+  'team-nedu':    'N-Education',
 }
 
 // Map: product-type-id → name
