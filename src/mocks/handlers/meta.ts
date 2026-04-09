@@ -75,9 +75,9 @@ export const metaHandlers = [
 
   http.get(`${BASE}/api/v1/me`, () => {
     return HttpResponse.json({
-      id: 'user-demo-1',
-      email: 'demo@nhileholdings.com',
-      display_name: 'Demo User',
+      id: 'user-test-1',
+      email: 'test@nhileholdings.com',
+      display_name: 'Nhi Le',
       avatar_url: null,
       role: 'design_leader',
       team: { id: 'team-1', name: 'Admin Nhile', slug: 'admin-nhile' },
