@@ -25,11 +25,12 @@ interface SimpleStatCardProps {
 function SimpleStatCard({ label, value, color }: SimpleStatCardProps) {
   return (
     <div style={{
-      background: '#fff', borderRadius: 14, padding: '20px 24px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column', gap: 8,
+      background: '#fff', borderRadius: 16, padding: '18px 20px 16px',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
+      display: 'flex', flexDirection: 'column',
     }}>
-      <p style={{ fontSize: 13, fontWeight: 500, color: '#6E6E73', margin: 0 }}>{label}</p>
-      <p style={{ fontSize: 32, fontWeight: 700, color: color ?? '#1D1D1F', margin: 0, lineHeight: 1 }}>
+      <p style={{ fontSize: 11, fontWeight: 500, color: '#AEAEB2', margin: '0 0 10px', letterSpacing: '0.02em', textTransform: 'uppercase', lineHeight: 1 }}>{label}</p>
+      <p style={{ fontSize: 28, fontWeight: 700, color: color ?? '#1D1D1F', margin: 0, lineHeight: 1, letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </p>
     </div>
@@ -52,11 +53,11 @@ function DesignerStatCards({ stats }: DesignerStatCardsProps) {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
       {cards.map(c => (
         <div key={c.label} style={{
-          background: '#fff', borderRadius: 14, padding: '20px 24px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+          background: '#fff', borderRadius: 16, padding: '18px 20px 16px',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
         }}>
-          <p style={{ fontSize: 13, fontWeight: 500, color: '#6E6E73', margin: '0 0 8px' }}>{c.label}</p>
-          <p style={{ fontSize: 32, fontWeight: 700, color: c.color, margin: 0, lineHeight: 1 }}>{c.value}</p>
+          <p style={{ fontSize: 11, fontWeight: 500, color: '#AEAEB2', margin: '0 0 10px', letterSpacing: '0.02em', textTransform: 'uppercase', lineHeight: 1 }}>{c.label}</p>
+          <p style={{ fontSize: 28, fontWeight: 700, color: c.color, margin: 0, lineHeight: 1, letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums' }}>{c.value}</p>
         </div>
       ))}
     </div>
@@ -188,23 +189,23 @@ export default function DashboardPage() {
             <>
               {/* Greeting */}
               <div style={{
-                background: '#fff', borderRadius: 14, padding: '16px 20px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                background: '#fff', borderRadius: 16, padding: '16px 20px',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
                 display: 'flex', alignItems: 'center', gap: 12,
               }}>
                 <div style={{
-                  width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #f97316, #ec4899)',
+                  width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, #f97316, #ec4899)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
-                  <span style={{ color: 'white', fontSize: 16, fontWeight: 700 }}>
+                  <span style={{ color: 'white', fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em' }}>
                     {user?.display_name?.[0] ?? '?'}
                   </span>
                 </div>
                 <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: '#1D1D1F', margin: 0 }}>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: '#1D1D1F', margin: 0, letterSpacing: '-0.01em' }}>
                     Xin chào, {user?.display_name ?? 'bạn'}!
                   </p>
-                  <p style={{ fontSize: 13, color: '#6E6E73', margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 12, color: '#AEAEB2', margin: '3px 0 0' }}>
                     Bạn có {activeOrderCount} order đang xử lý
                   </p>
                 </div>
@@ -231,23 +232,23 @@ export default function DashboardPage() {
             <>
               {/* Greeting */}
               <div style={{
-                background: '#fff', borderRadius: 14, padding: '16px 20px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                background: '#fff', borderRadius: 16, padding: '16px 20px',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
                 display: 'flex', alignItems: 'center', gap: 12,
               }}>
                 <div style={{
-                  width: 40, height: 40, borderRadius: '50%', background: '#34C759',
+                  width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, #16A34A, #059669)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
-                  <span style={{ color: 'white', fontSize: 16, fontWeight: 700 }}>
+                  <span style={{ color: 'white', fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em' }}>
                     {user?.display_name?.[0] ?? '?'}
                   </span>
                 </div>
                 <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: '#1D1D1F', margin: 0 }}>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: '#1D1D1F', margin: 0, letterSpacing: '-0.01em' }}>
                     Xin chào, {user?.display_name ?? 'bạn'}!
                   </p>
-                  <p style={{ fontSize: 13, color: '#6E6E73', margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 12, color: '#AEAEB2', margin: '3px 0 0' }}>
                     Bạn có {designerStats.active} task đang làm hôm nay
                   </p>
                 </div>

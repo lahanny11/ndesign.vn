@@ -16,30 +16,81 @@ interface CardProps {
 }
 
 function StatCard({ label, value, sub, trend, trendUp, accent, alert }: CardProps) {
+  const valueColor = accent ? '#2563EB' : alert ? '#E11D48' : '#1D1D1F'
+
   return (
-    <div className="bg-white rounded-2xl p-5 flex flex-col gap-3"
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)' }}>
-      <div className="flex items-start justify-between">
-        <p className="text-[13px] font-medium text-[#6E6E73]">{label}</p>
+    <div style={{
+      background: '#fff',
+      borderRadius: 16,
+      padding: '18px 20px 16px',
+      display: 'flex',
+      flexDirection: 'column',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
+    }}>
+      {/* Label */}
+      <p style={{
+        fontSize: 11,
+        fontWeight: 500,
+        color: '#AEAEB2',
+        margin: '0 0 10px',
+        letterSpacing: '0.02em',
+        textTransform: 'uppercase',
+        lineHeight: 1,
+      }}>
+        {label}
+      </p>
+
+      {/* Primary number */}
+      <p style={{
+        fontSize: 28,
+        fontWeight: 700,
+        color: valueColor,
+        margin: 0,
+        lineHeight: 1,
+        letterSpacing: '-0.025em',
+        fontVariantNumeric: 'tabular-nums',
+      }}>
+        {value}
+      </p>
+
+      {/* Sub + trend */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        gap: 8,
+      }}>
+        <p style={{ fontSize: 12, color: '#AEAEB2', margin: 0, lineHeight: 1.3, flex: 1, minWidth: 0 }}>
+          {sub}
+        </p>
         {trend && (
-          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full
-            ${trendUp ? 'text-[#34C759] bg-[#34C759]/10' : 'text-[#FF9F0A] bg-[#FF9F0A]/10'}`}>
+          <span style={{
+            fontSize: 10,
+            fontWeight: 600,
+            padding: '3px 7px',
+            borderRadius: 99,
+            flexShrink: 0,
+            letterSpacing: '0.01em',
+            color: trendUp ? '#16A34A' : '#E11D48',
+            background: trendUp ? 'rgba(22,163,74,0.09)' : 'rgba(225,29,72,0.09)',
+          }}>
             {trend}
           </span>
         )}
-        {alert && (
-          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full text-[#FF3B30] bg-[#FF3B30]/8">
+        {alert && !trend && (
+          <span style={{
+            fontSize: 10,
+            fontWeight: 600,
+            padding: '3px 7px',
+            borderRadius: 99,
+            flexShrink: 0,
+            color: '#E11D48',
+            background: 'rgba(225,29,72,0.09)',
+          }}>
             Cần xử lý
           </span>
         )}
-      </div>
-
-      <div>
-        <p className={`text-[32px] font-bold tracking-tight leading-none
-          ${accent ? 'text-[#2563EB]' : alert ? 'text-[#E11D48]' : 'text-[#1D1D1F]'}`}>
-          {value}
-        </p>
-        <p className="text-[12px] text-[#AEAEB2] mt-1.5">{sub}</p>
       </div>
     </div>
   )
@@ -47,10 +98,15 @@ function StatCard({ label, value, sub, trend, trendUp, accent, alert }: CardProp
 
 export default function StatCards({ stats, loading }: Props) {
   if (loading) return (
-    <div className="grid grid-cols-4 gap-3">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-white rounded-2xl h-[108px] animate-pulse"
-          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}/>
+        <div key={i} style={{
+          background: '#fff',
+          borderRadius: 16,
+          height: 106,
+          boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
+          opacity: 0.6,
+        }}/>
       ))}
     </div>
   )
@@ -58,9 +114,10 @@ export default function StatCards({ stats, loading }: Props) {
   const avgRevision = stats.total_orders > 0
     ? (stats.in_progress_count / Math.max(stats.total_orders, 1) * 2.3).toFixed(1)
     : '0.0'
+  const onTrack = Number(avgRevision) <= 2
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
       <StatCard
         label="Đang thực hiện"
         value={stats.in_progress_count}
@@ -72,7 +129,7 @@ export default function StatCards({ stats, loading }: Props) {
       <StatCard
         label="Hoàn thành tháng này"
         value={stats.done_count}
-        sub="Đã bàn giao thành công"
+        sub="Bàn giao thành công"
         trend={`+${stats.done_count}`}
         trendUp
       />
@@ -84,10 +141,10 @@ export default function StatCards({ stats, loading }: Props) {
       />
       <StatCard
         label="Avg. Revision"
-        value={`${avgRevision}x`}
+        value={`${avgRevision}×`}
         sub="Mục tiêu dưới 2 lần"
-        trend={Number(avgRevision) <= 2 ? 'On track' : 'Over target'}
-        trendUp={Number(avgRevision) <= 2}
+        trend={onTrack ? 'On track' : 'Cần cải thiện'}
+        trendUp={onTrack}
       />
     </div>
   )

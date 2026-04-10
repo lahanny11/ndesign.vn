@@ -43,7 +43,6 @@ const DESIGNER_WORKLOAD: DesignerWorkload[] = [
 
 const MAX_CAPACITY = 7
 
-// Simple name-to-color hash
 function nameToColor(name: string): string {
   const COLORS = ['#2563EB', '#16A34A', '#FF9F0A', '#E11D48', '#AF52DE', '#00C7BE', '#FF6B35']
   let hash = 0
@@ -52,142 +51,170 @@ function nameToColor(name: string): string {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  pending: 'Chờ nhận',
-  assigned: 'Đã nhận',
-  in_progress: 'Đang làm',
-  delivered: 'Đã giao',
-  feedback: 'Feedback',
-  done: 'Hoàn thành',
+  pending: 'Chờ nhận', assigned: 'Đã nhận', in_progress: 'Đang làm',
+  delivered: 'Đã giao', feedback: 'Feedback', done: 'Hoàn thành',
 }
 
-interface DesignerCardProps {
-  designer: DesignerWorkload
-}
-
-function DesignerCard({ designer }: DesignerCardProps) {
+function DesignerCard({ designer }: { designer: DesignerWorkload }) {
   const [expanded, setExpanded] = useState(false)
   const avatarColor = nameToColor(designer.name)
   const total = designer.active_tasks + designer.pending_tasks
   const capPct = Math.min((total / MAX_CAPACITY) * 100, 100)
   const capColor = total >= MAX_CAPACITY ? '#E11D48' : total >= 5 ? '#FF9F0A' : '#16A34A'
+  const reviseAlert = designer.avg_revisions > 2
 
   return (
     <div
+      onClick={() => setExpanded(v => !v)}
       style={{
         background: '#fff',
         borderRadius: 14,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-        padding: '14px 16px',
-        minWidth: 175,
-        maxWidth: 210,
-        flex: '0 0 auto',
+        padding: '16px',
+        border: designer.has_blocked
+          ? '1px solid rgba(225,29,72,0.18)'
+          : '1px solid rgba(0,0,0,0.06)',
         cursor: 'pointer',
-        border: designer.has_blocked ? '1px solid rgba(255,59,48,0.2)' : '1px solid rgba(0,0,0,0.05)',
         transition: 'box-shadow 0.2s',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
       }}
-      onClick={() => setExpanded(v => !v)}
-      onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)')}
-      onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)')}
+      onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.10)')}
+      onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)')}
     >
-      {/* Header: avatar + name */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{
-          width: 32, height: 32, borderRadius: '50%', background: avatarColor,
+          width: 34, height: 34, borderRadius: '50%', background: avatarColor,
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <span style={{ color: 'white', fontSize: 13, fontWeight: 700 }}>{designer.name[0]}</span>
+          <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{designer.name[0]}</span>
         </div>
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: 13, fontWeight: 600, color: '#1D1D1F', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#1D1D1F', margin: 0, lineHeight: 1.2 }}>
             {designer.name}
           </p>
-          <p style={{ fontSize: 10, color: '#AEAEB2', margin: 0 }}>Designer</p>
+          <p style={{ fontSize: 11, color: '#AEAEB2', margin: '2px 0 0' }}>Designer</p>
         </div>
+        {designer.has_blocked && (
+          <span style={{
+            fontSize: 10, fontWeight: 600,
+            padding: '3px 8px', borderRadius: 6,
+            background: 'rgba(225,29,72,0.09)', color: '#E11D48',
+            flexShrink: 0,
+          }}>
+            Blocked
+          </span>
+        )}
       </div>
 
-      {/* Stats */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 11, color: '#6E6E73', flex: 1 }}>Đang làm</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#1D1D1F' }}>{designer.active_tasks}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 11, color: '#6E6E73', flex: 1 }}>Done/tuần</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#16A34A' }}>{designer.done_this_week}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 11, color: '#6E6E73', flex: 1 }}>Revise TB</span>
-          <span style={{
-            fontSize: 12, fontWeight: 700,
-            color: designer.avg_revisions > 2 ? '#E11D48' : '#1D1D1F',
-          }}>{designer.avg_revisions.toFixed(1)}</span>
-        </div>
+      {/* Stats grid — 3 metrics in a row */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3,1fr)',
+        gap: 1,
+        background: 'rgba(0,0,0,0.05)',
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginBottom: 12,
+      }}>
+        {[
+          { label: 'Đang làm', value: designer.active_tasks, color: '#2563EB' },
+          { label: 'Done/tuần', value: designer.done_this_week, color: '#16A34A' },
+          { label: 'Revise TB', value: designer.avg_revisions.toFixed(1), color: reviseAlert ? '#E11D48' : '#1D1D1F' },
+        ].map((stat, i) => (
+          <div key={i} style={{
+            background: '#fff',
+            padding: '10px 0',
+            textAlign: 'center',
+          }}>
+            <p style={{
+              fontSize: 18,
+              fontWeight: 700,
+              color: stat.color,
+              margin: 0,
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {stat.value}
+            </p>
+            <p style={{
+              fontSize: 10,
+              color: '#AEAEB2',
+              margin: '4px 0 0',
+              lineHeight: 1,
+            }}>
+              {stat.label}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Capacity bar */}
-      <div style={{ marginBottom: designer.has_blocked ? 8 : 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-          <span style={{ fontSize: 9, color: '#AEAEB2', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 600, color: '#AEAEB2',
+            textTransform: 'uppercase', letterSpacing: '0.06em',
+          }}>
             Capacity
           </span>
-          <span style={{ fontSize: 9, fontWeight: 700, color: capColor }}>{total}/{MAX_CAPACITY}</span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: capColor, fontVariantNumeric: 'tabular-nums' }}>
+            {total}/{MAX_CAPACITY}
+          </span>
         </div>
-        <div style={{ height: 4, background: 'rgba(0,0,0,0.07)', borderRadius: 99, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${capPct}%`, background: capColor, borderRadius: 99, transition: 'width 0.4s' }}/>
+        {/* Dot-based capacity — Apple-style */}
+        <div style={{ display: 'flex', gap: 4 }}>
+          {Array.from({ length: MAX_CAPACITY }).map((_, i) => (
+            <div key={i} style={{
+              flex: 1,
+              height: 5,
+              borderRadius: 99,
+              background: i < total ? capColor : 'rgba(0,0,0,0.08)',
+              transition: 'background 0.3s',
+            }}/>
+          ))}
         </div>
       </div>
 
-      {/* Blocked badge */}
-      {designer.has_blocked && (
-        <div style={{
-          marginTop: 8,
-          background: 'rgba(255,59,48,0.1)', color: '#E11D48',
-          fontSize: 10, fontWeight: 600,
-          padding: '3px 8px', borderRadius: 6, display: 'inline-block',
-        }}>
-          Blocked
-        </div>
-      )}
-
-      {/* Expanded tasks list */}
+      {/* Expanded task list */}
       {expanded && designer.tasks.length > 0 && (
         <div style={{
           marginTop: 12,
-          borderTop: '1px solid rgba(0,0,0,0.07)',
-          paddingTop: 10,
+          paddingTop: 12,
+          borderTop: '1px solid rgba(0,0,0,0.06)',
           display: 'flex',
           flexDirection: 'column',
           gap: 6,
         }}>
           {designer.tasks.map(task => (
             <div key={task.id} style={{
-              background: task.has_red_flag ? 'rgba(255,59,48,0.05)' : 'rgba(0,0,0,0.03)',
-              borderRadius: 8, padding: '6px 8px',
-              border: task.has_red_flag ? '1px solid rgba(255,59,48,0.15)' : '1px solid transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '7px 10px',
+              borderRadius: 8,
+              background: task.has_red_flag ? 'rgba(225,29,72,0.04)' : 'rgba(0,0,0,0.02)',
             }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: '#1D1D1F', margin: '0 0 2px', lineHeight: 1.3 }}>
+              <div style={{
+                width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
+                background: task.has_red_flag ? '#E11D48' : '#AEAEB2',
+              }}/>
+              <p style={{
+                fontSize: 11, color: '#3A3A3C', margin: 0, flex: 1, minWidth: 0,
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
                 {task.task_name}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{
-                  fontSize: 9, fontWeight: 600,
-                  color: task.has_red_flag ? '#E11D48' : '#6E6E73',
-                }}>
-                  {STATUS_LABEL[task.status] ?? task.status}
-                </span>
-                <span style={{ fontSize: 9, color: '#AEAEB2' }}>
-                  {new Date(task.deadline).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
-                </span>
-              </div>
+              <span style={{
+                fontSize: 10, fontWeight: 500,
+                color: task.has_red_flag ? '#E11D48' : '#6E6E73',
+                flexShrink: 0,
+              }}>
+                {STATUS_LABEL[task.status]}
+              </span>
             </div>
           ))}
         </div>
-      )}
-
-      {expanded && designer.tasks.length === 0 && (
-        <p style={{ fontSize: 10, color: '#AEAEB2', fontStyle: 'italic', marginTop: 10, marginBottom: 0 }}>
-          Không có task nào
-        </p>
       )}
     </div>
   )
@@ -195,22 +222,31 @@ function DesignerCard({ designer }: DesignerCardProps) {
 
 export default function WorkloadPanel() {
   return (
-    <div style={{ marginBottom: 4 }}>
-      {/* Section header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <h3 style={{ fontSize: 13, fontWeight: 600, color: '#1D1D1F', margin: 0 }}>
-          Workload Designer
-        </h3>
+    <div style={{
+      background: '#fff',
+      borderRadius: 16,
+      padding: '18px 20px',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div>
+          <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1D1D1F', margin: 0, letterSpacing: '-0.01em' }}>
+            Workload Designer
+          </h3>
+          <p style={{ fontSize: 12, color: '#AEAEB2', margin: '2px 0 0' }}>
+            Click card để xem task chi tiết
+          </p>
+        </div>
         <span style={{
-          fontSize: 10, fontWeight: 600, color: '#6E6E73',
-          background: 'rgba(0,0,0,0.07)', padding: '2px 8px', borderRadius: 20,
+          fontSize: 11, fontWeight: 500,
+          padding: '4px 10px', borderRadius: 99,
+          background: 'rgba(0,0,0,0.05)', color: '#6E6E73',
         }}>
           Hôm nay
         </span>
       </div>
 
-      {/* Designer cards — horizontal scroll */}
-      <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
         {DESIGNER_WORKLOAD.map(d => (
           <DesignerCard key={d.id} designer={d} />
         ))}

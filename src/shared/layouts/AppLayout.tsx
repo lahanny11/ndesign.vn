@@ -236,38 +236,52 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: '#F5F5F7' }}>
 
-      {/* Sidebar — icon only, Apple macOS style */}
-      <aside className="w-[72px] bg-white flex flex-col items-center py-5 gap-1 shrink-0"
-        style={{ borderRight: '1px solid rgba(0,0,0,0.08)' }}>
+      {/* Sidebar — icon-only, Apple macOS style */}
+      <aside className="w-[68px] bg-white flex flex-col items-center py-4 gap-0 shrink-0"
+        style={{ borderRight: '1px solid rgba(0,0,0,0.07)' }}>
         {/* Logo */}
-        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-5 shrink-0"
+        <div className="w-8 h-8 rounded-[9px] flex items-center justify-center mb-6 shrink-0"
           style={{ background: '#000' }}>
-          <span className="text-white text-[15px] font-bold" style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.5px' }}>N</span>
+          <span className="text-white font-bold"
+            style={{ fontSize: 14, fontFamily: 'Georgia, serif', letterSpacing: '-0.5px' }}>N</span>
         </div>
 
         {/* Nav icons */}
-        <nav className="flex flex-col gap-1 flex-1 w-full px-2">
+        <nav className="flex flex-col gap-0.5 flex-1 w-full px-2">
           {navItems.map((item) => {
             const isActive = currentNav === item.key
             return (
               <div key={item.label} className="relative group">
                 <button
                   onClick={() => navigate(item.route)}
-                  className={`w-full h-11 rounded-[10px] flex items-center justify-center transition-all duration-150
-                    ${isActive
-                      ? 'text-white'
-                      : 'text-[#AEAEB2] hover:text-[#3A3A3C] hover:bg-black/[0.04]'
-                    }`}
-                  style={isActive ? { background: '#000' } : {}}
+                  className="w-full rounded-[9px] flex items-center justify-center transition-all duration-150"
+                  style={{
+                    height: 44,
+                    background: isActive ? '#000' : 'transparent',
+                    color: isActive ? '#fff' : '#AEAEB2',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.05)'
+                      ;(e.currentTarget as HTMLButtonElement).style.color = '#3A3A3C'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                      ;(e.currentTarget as HTMLButtonElement).style.color = '#AEAEB2'
+                    }
+                  }}
                 >
                   {item.icon}
                 </button>
                 {/* Tooltip */}
-                <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-[#1D1D1F] text-white
-                  text-[11px] font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100
-                  pointer-events-none transition-opacity z-50 shadow-lg">
+                <div className="absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-[#1D1D1F] text-white
+                  text-[11px] font-semibold rounded-[8px] whitespace-nowrap opacity-0 group-hover:opacity-100
+                  pointer-events-none transition-opacity z-50"
+                  style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
                   {item.label}
-                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#1D1D1F]"/>
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-[4px] border-transparent border-r-[#1D1D1F]"/>
                 </div>
               </div>
             )
@@ -275,14 +289,15 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
         </nav>
 
         {/* User avatar */}
-        <div className="relative group mt-auto">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-semibold cursor-pointer"
-            style={{ background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)' }}>
+        <div className="relative group mt-auto mb-1">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer"
+            style={{ fontSize: 12, background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)' }}>
             {user?.display_name?.[0] ?? 'U'}
           </div>
-          <div className="absolute left-full ml-3 bottom-0 px-2.5 py-1.5 bg-[#1D1D1F] text-white
-            text-[11px] font-semibold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100
-            pointer-events-none transition-opacity z-50 shadow-lg">
+          <div className="absolute left-full ml-2.5 bottom-0 px-2.5 py-1.5 bg-[#1D1D1F] text-white
+            text-[11px] font-semibold rounded-[8px] whitespace-nowrap opacity-0 group-hover:opacity-100
+            pointer-events-none transition-opacity z-50"
+            style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
             {user?.display_name ?? 'Demo User'}
           </div>
         </div>
@@ -291,34 +306,51 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="h-[52px] bg-white/80 flex items-center px-6 gap-4 shrink-0"
+        <header className="h-[50px] flex items-center px-5 gap-3 shrink-0"
           style={{
-            borderBottom: '1px solid rgba(0,0,0,0.08)',
+            background: 'rgba(255,255,255,0.85)',
+            borderBottom: '1px solid rgba(0,0,0,0.07)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
           }}>
           {/* Page title */}
-          <h1 className="text-[15px] font-semibold text-[#1D1D1F] tracking-tight shrink-0">
+          <h1 style={{
+            fontSize: 15,
+            fontWeight: 600,
+            color: '#1D1D1F',
+            letterSpacing: '-0.02em',
+            flexShrink: 0,
+            margin: 0,
+          }}>
             {pageTitle}
           </h1>
 
           {/* Search */}
-          <div className="flex-1 max-w-[320px] mx-4">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#AEAEB2]">
+          <div style={{ flex: 1, maxWidth: 280, margin: '0 8px' }}>
+            <div style={{ position: 'relative' }}>
+              <span style={{
+                position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
+                color: '#AEAEB2', display: 'flex', alignItems: 'center',
+              }}>
                 {Icons.search}
               </span>
               <input type="text" placeholder="Tìm kiếm..."
-                className="w-full pl-8 pr-3 py-[6px] text-[13px] rounded-[8px] outline-none transition-all
-                  placeholder:text-[#AEAEB2] text-[#1D1D1F]"
                 style={{
-                  background: 'rgba(0,0,0,0.05)',
+                  width: '100%',
+                  paddingLeft: 30, paddingRight: 10, paddingTop: 6, paddingBottom: 6,
+                  fontSize: 12,
+                  borderRadius: 8,
                   border: '1px solid transparent',
+                  background: 'rgba(0,0,0,0.05)',
+                  color: '#1D1D1F',
+                  outline: 'none',
+                  transition: 'all 0.15s',
+                  fontFamily: 'inherit',
                 }}
                 onFocus={e => {
                   e.target.style.background = '#fff'
-                  e.target.style.border = '1px solid rgba(0,0,0,0.3)'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)'
+                  e.target.style.border = '1px solid rgba(0,0,0,0.25)'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.05)'
                 }}
                 onBlur={e => {
                   e.target.style.background = 'rgba(0,0,0,0.05)'
@@ -329,25 +361,48 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
             </div>
           </div>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
             {/* Role Switcher */}
             <RoleSwitcher />
 
             {/* Bell */}
-            <button onClick={() => setNotifOpen(!notifOpen)}
-              className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-[#6E6E73]
-                hover:bg-black/[0.04] transition-colors">
+            <button
+              onClick={() => setNotifOpen(!notifOpen)}
+              style={{
+                position: 'relative',
+                width: 36, height: 36,
+                borderRadius: 9,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', background: 'transparent', cursor: 'pointer',
+                color: '#6E6E73', transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
               {Icons.bell}
-              <span className="absolute top-2 right-2 w-[6px] h-[6px] rounded-full"
-                style={{ background: '#FF3B30' }}/>
+              <span style={{
+                position: 'absolute', top: 8, right: 8,
+                width: 6, height: 6, borderRadius: '50%',
+                background: '#E11D48',
+              }}/>
             </button>
 
-            {/* Create order — only show if callback is provided */}
+            {/* Create order */}
             {onCreateOrder && (
-              <button onClick={onCreateOrder}
-                className="flex items-center gap-1.5 h-9 px-4 rounded-[10px] text-[13px] font-semibold text-white
-                  transition-all hover:opacity-80 active:scale-[0.97]"
-                style={{ background: '#000' }}>
+              <button
+                onClick={onCreateOrder}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  height: 34, paddingLeft: 14, paddingRight: 14,
+                  borderRadius: 9,
+                  fontSize: 12, fontWeight: 600, color: '#fff',
+                  border: 'none', background: '#000', cursor: 'pointer',
+                  transition: 'opacity 0.15s',
+                  letterSpacing: '-0.01em',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
                 {Icons.plus}
                 Tạo order
               </button>
@@ -356,7 +411,7 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto" style={{ padding: 20 }}>
           {children}
         </main>
       </div>
