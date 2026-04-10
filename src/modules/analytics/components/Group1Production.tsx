@@ -227,13 +227,13 @@ export default function Group1Production({ data }: Group1ProductionProps) {
                   padding: '8px 10px',
                   borderRadius: 10,
                   background: 'rgba(94,92,230,0.05)',
-                  border: '1px solid rgba(94,92,230,0.15)',
+                  border: '1px solid rgba(37,99,235,0.1)',
                 }}>
                   <div style={{
                     padding: '2px 6px',
                     borderRadius: 5,
-                    background: 'rgba(94,92,230,0.1)',
-                    color: '#5E5CE6',
+                    background: 'rgba(37,99,235,0.1)',
+                    color: '#2563EB',
                     fontSize: 9,
                     fontWeight: 700,
                     flexShrink: 0,

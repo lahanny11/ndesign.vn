@@ -33,6 +33,8 @@ export interface ProductSize {
   width: number | null
   height: number | null
   unit: 'px' | 'mm' | null
+  platform?: string
+  platform_color?: string
 }
 
 export interface ProductType {

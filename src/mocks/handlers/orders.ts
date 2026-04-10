@@ -74,7 +74,7 @@ export const orderHandlers = [
         id: crypto.randomUUID(),
         style_summary: `Phong cách "${style}" — kết hợp tinh tế và hiện đại, tạo ấn tượng mạnh mẽ nhưng không mất đi sự thanh lịch.`,
         color_palette: [
-          { hex: '#5E5CE6', name: 'Indigo Blue',  role: 'primary' },
+          { hex: '#000', name: 'Indigo Blue',  role: 'primary' },
           { hex: '#1D1D1F', name: 'Deep Black',   role: 'secondary' },
           { hex: '#F5F5F7', name: 'Silver Light', role: 'accent' },
           { hex: '#FFFFFF', name: 'Pure White',   role: 'neutral' },
@@ -90,7 +90,7 @@ export const orderHandlers = [
         ],
         layout_config: {
           grid_columns: 3,
-          primary_color: '#5E5CE6',
+          primary_color: '#000',
           accent_color: '#F5F5F7',
           layout_type: 'grid',
         },

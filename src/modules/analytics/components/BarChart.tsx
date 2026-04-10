@@ -31,7 +31,7 @@ export default function BarChart({ items, max, unit, threshold }: BarChartProps)
       {items.map((item, idx) => {
         const pct = Math.min((item.value / computedMax) * 100, 100)
         const isOverThreshold = threshold !== undefined && item.value > threshold
-        const barColor = isOverThreshold ? '#FF3B30' : (item.color ?? '#5E5CE6')
+        const barColor = isOverThreshold ? '#FF3B30' : (item.color ?? '#2563EB')
 
         return (
           <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

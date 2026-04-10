@@ -43,9 +43,9 @@ interface DesignerStatCardsProps {
 
 function DesignerStatCards({ stats }: DesignerStatCardsProps) {
   const cards = [
-    { label: 'Task đang làm', value: stats.active, color: '#5E5CE6' },
+    { label: 'Task đang làm', value: stats.active, color: '#2563EB' },
     { label: 'Task cần làm', value: stats.pending, color: '#FF9F0A' },
-    { label: 'Done tuần này', value: stats.done, color: '#34C759' },
+    { label: 'Done tuần này', value: stats.done, color: '#16A34A' },
     { label: 'Revise TB của tôi', value: stats.avgRevision, color: '#1D1D1F' },
   ]
   return (
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                 display: 'flex', alignItems: 'center', gap: 12,
               }}>
                 <div style={{
-                  width: 40, height: 40, borderRadius: '50%', background: '#5E5CE6',
+                  width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #f97316, #ec4899)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
                   <span style={{ color: 'white', fontSize: 16, fontWeight: 700 }}>
@@ -212,8 +212,8 @@ export default function DashboardPage() {
 
               {/* 2 simple stat cards */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <SimpleStatCard label="Order đang chạy" value={activeOrderCount} color="#5E5CE6" />
-                <SimpleStatCard label="Hoàn thành" value={orders.filter(o => o.status === 'done').length} color="#34C759" />
+                <SimpleStatCard label="Order đang chạy" value={activeOrderCount} color="#2563EB" />
+                <SimpleStatCard label="Hoàn thành" value={orders.filter(o => o.status === 'done').length} color="#16A34A" />
               </div>
 
               <SimplifiedTabs

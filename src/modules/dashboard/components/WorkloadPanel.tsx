@@ -45,7 +45,7 @@ const MAX_CAPACITY = 7
 
 // Simple name-to-color hash
 function nameToColor(name: string): string {
-  const COLORS = ['#5E5CE6', '#34C759', '#FF9F0A', '#FF3B30', '#AF52DE', '#00C7BE', '#FF6B35']
+  const COLORS = ['#2563EB', '#16A34A', '#FF9F0A', '#E11D48', '#AF52DE', '#00C7BE', '#FF6B35']
   let hash = 0
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) & 0xffffff
   return COLORS[Math.abs(hash) % COLORS.length]
@@ -69,7 +69,7 @@ function DesignerCard({ designer }: DesignerCardProps) {
   const avatarColor = nameToColor(designer.name)
   const total = designer.active_tasks + designer.pending_tasks
   const capPct = Math.min((total / MAX_CAPACITY) * 100, 100)
-  const capColor = total >= MAX_CAPACITY ? '#FF3B30' : total >= 5 ? '#FF9F0A' : '#34C759'
+  const capColor = total >= MAX_CAPACITY ? '#E11D48' : total >= 5 ? '#FF9F0A' : '#16A34A'
 
   return (
     <div
@@ -113,13 +113,13 @@ function DesignerCard({ designer }: DesignerCardProps) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: 11, color: '#6E6E73', flex: 1 }}>Done/tuần</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#34C759' }}>{designer.done_this_week}</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#16A34A' }}>{designer.done_this_week}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: 11, color: '#6E6E73', flex: 1 }}>Revise TB</span>
           <span style={{
             fontSize: 12, fontWeight: 700,
-            color: designer.avg_revisions > 2 ? '#FF3B30' : '#1D1D1F',
+            color: designer.avg_revisions > 2 ? '#E11D48' : '#1D1D1F',
           }}>{designer.avg_revisions.toFixed(1)}</span>
         </div>
       </div>
@@ -141,7 +141,7 @@ function DesignerCard({ designer }: DesignerCardProps) {
       {designer.has_blocked && (
         <div style={{
           marginTop: 8,
-          background: 'rgba(255,59,48,0.1)', color: '#FF3B30',
+          background: 'rgba(255,59,48,0.1)', color: '#E11D48',
           fontSize: 10, fontWeight: 600,
           padding: '3px 8px', borderRadius: 6, display: 'inline-block',
         }}>
@@ -171,7 +171,7 @@ function DesignerCard({ designer }: DesignerCardProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{
                   fontSize: 9, fontWeight: 600,
-                  color: task.has_red_flag ? '#FF3B30' : '#6E6E73',
+                  color: task.has_red_flag ? '#E11D48' : '#6E6E73',
                 }}>
                   {STATUS_LABEL[task.status] ?? task.status}
                 </span>

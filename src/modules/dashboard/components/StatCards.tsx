@@ -36,7 +36,7 @@ function StatCard({ label, value, sub, trend, trendUp, accent, alert }: CardProp
 
       <div>
         <p className={`text-[32px] font-bold tracking-tight leading-none
-          ${accent ? 'text-[#5E5CE6]' : alert ? 'text-[#FF3B30]' : 'text-[#1D1D1F]'}`}>
+          ${accent ? 'text-[#2563EB]' : alert ? 'text-[#E11D48]' : 'text-[#1D1D1F]'}`}>
           {value}
         </p>
         <p className="text-[12px] text-[#AEAEB2] mt-1.5">{sub}</p>

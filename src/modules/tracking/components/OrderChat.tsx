@@ -58,7 +58,7 @@ const DEFAULT_MESSAGES: ChatMessage[] = [
 ]
 
 const ROLE_BADGE: Record<AppRole, { label: string; color: string }> = {
-  design_leader: { label: 'Leader', color: '#5E5CE6' },
+  design_leader: { label: 'Leader', color: '#000' },
   designer:      { label: 'Designer', color: '#34C759' },
   orderer:       { label: 'Orderer', color: '#FF9F0A' },
 }
@@ -220,7 +220,7 @@ export default function OrderChat({ orderId }: Props) {
               {/* Bubble */}
               <div style={{
                 maxWidth: '80%',
-                background: msg.is_own ? '#5E5CE6' : 'rgba(0,0,0,0.06)',
+                background: msg.is_own ? '#000' : 'rgba(0,0,0,0.06)',
                 color: msg.is_own ? '#fff' : '#1D1D1F',
                 borderRadius: msg.is_own ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
                 padding: '8px 12px',
@@ -266,7 +266,7 @@ export default function OrderChat({ orderId }: Props) {
           disabled={!input.trim()}
           style={{
             width: 30, height: 30, borderRadius: 8, border: 'none', cursor: input.trim() ? 'pointer' : 'not-allowed',
-            background: input.trim() ? '#5E5CE6' : 'rgba(0,0,0,0.1)',
+            background: input.trim() ? '#000' : 'rgba(0,0,0,0.1)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0, transition: 'background 0.15s',
           }}

@@ -2,12 +2,12 @@ import type { OrderCard as OrderCardType } from '../types/dashboard.types'
 
 // Apple-style status — text only, no dots
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-  pending:     { label: 'Chờ nhận',    color: '#6E6E73',  bg: 'rgba(0,0,0,0.06)' },
-  assigned:    { label: 'Đã nhận',     color: '#5E5CE6',  bg: 'rgba(94,92,230,0.1)' },
-  in_progress: { label: 'Đang làm',    color: '#5E5CE6',  bg: 'rgba(94,92,230,0.1)' },
-  delivered:   { label: 'Đã giao',     color: '#FF9F0A',  bg: 'rgba(255,159,10,0.1)' },
-  feedback:    { label: 'Feedback',    color: '#AF52DE',  bg: 'rgba(175,82,222,0.1)' },
-  done:        { label: 'Hoàn thành',  color: '#34C759',  bg: 'rgba(52,199,89,0.1)' },
+  pending:     { label: 'Chờ nhận',    color: '#64748B',  bg: '#F8FAFC' },
+  assigned:    { label: 'Đã nhận',     color: '#2563EB',  bg: '#EFF6FF' },
+  in_progress: { label: 'Đang làm',    color: '#2563EB',  bg: '#EFF6FF' },
+  delivered:   { label: 'Đã giao',     color: '#EA580C',  bg: '#FFF7ED' },
+  feedback:    { label: 'Feedback',    color: '#7C3AED',  bg: '#F5F3FF' },
+  done:        { label: 'Hoàn thành',  color: '#16A34A',  bg: '#F0FDF4' },
 }
 
 // Clean color blocks — no gradients, no patterns
@@ -26,6 +26,7 @@ function getTypeLabel(typeName: string): string {
     'YouTube': 'YT',
     'Print': 'Print',
     'Email': 'Email',
+    'Mailing List': 'Mail',
     'Custom': 'Custom',
   }
   return map[typeName] ?? typeName.slice(0, 6)
@@ -33,7 +34,7 @@ function getTypeLabel(typeName: string): string {
 
 // Simple hash → color for avatar
 function nameToColor(name: string): string {
-  const COLORS = ['#5E5CE6', '#34C759', '#FF9F0A', '#FF3B30', '#AF52DE', '#00C7BE', '#FF6B35']
+  const COLORS = ['#2563EB', '#16A34A', '#EA580C', '#E11D48', '#7C3AED', '#00838F', '#E07B39']
   let hash = 0
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) & 0xffffff
   return COLORS[Math.abs(hash) % COLORS.length]
@@ -239,7 +240,7 @@ export default function OrderCard({ order, onTrack, index }: Props) {
             <div style={{
               height: '100%', borderRadius: 99,
               width: `${pct}%`,
-              background: pct === 100 ? '#34C759' : '#5E5CE6',
+              background: pct === 100 ? '#16A34A' : '#2563EB',
               transition: 'width 0.5s',
             }}/>
           </div>
@@ -271,11 +272,11 @@ export default function OrderCard({ order, onTrack, index }: Props) {
             style={{
               fontSize: 11, fontWeight: 600, padding: '6px 12px',
               borderRadius: 8, border: 'none', cursor: 'pointer',
-              color: '#5E5CE6', background: 'rgba(94,92,230,0.08)',
+              color: '#000', background: 'rgba(0,0,0,0.06)',
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(94,92,230,0.14)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(94,92,230,0.08)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.10)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
           >
             Chi tiết
           </button>

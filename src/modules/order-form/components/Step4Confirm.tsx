@@ -62,7 +62,7 @@ export default function Step4Confirm({ data, teamName }: Props) {
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
         </svg>
         <div>
-          <p style={{ fontSize: '13px', fontWeight: 600, color: '#5E5CE6', margin: 0 }}>Kiểm tra lần cuối</p>
+          <p style={{ fontSize: '13px', fontWeight: 600, color: '#000', margin: 0 }}>Kiểm tra lần cuối</p>
           <p style={{ fontSize: '12px', color: '#6E6E73', margin: '2px 0 0' }}>
             Sau khi gửi, Design Team sẽ xác nhận trong 2–4 giờ làm việc.
           </p>

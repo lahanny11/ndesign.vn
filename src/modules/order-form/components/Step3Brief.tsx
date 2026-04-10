@@ -18,7 +18,7 @@ const STYLE_EXAMPLES = [
 ]
 
 const COLOR_PRESETS = [
-  { hex: '#5E5CE6', name: 'Purple' },
+  { hex: '#000', name: 'Purple' },
   { hex: '#007AFF', name: 'Blue' },
   { hex: '#34C759', name: 'Green' },
   { hex: '#FF9F0A', name: 'Orange' },
@@ -111,7 +111,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
   const inputFocus: React.CSSProperties = {
     background: '#fff',
     border: '1px solid rgba(94,92,230,0.5)',
-    boxShadow: '0 0 0 3px rgba(94,92,230,0.1)',
+    boxShadow: '0 0 0 3px rgba(0,0,0,0.07)',
   }
   const inputDone: React.CSSProperties = {
     background: 'rgba(52,199,89,0.05)',
@@ -157,7 +157,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
             <div style={{
               height: '100%',
               borderRadius: '1px',
-              background: briefOk ? '#34C759' : '#5E5CE6',
+              background: briefOk ? '#34C759' : '#000',
               width: `${Math.min((briefCount / 10) * 100, 100)}%`,
               transition: 'width 0.3s ease, background 0.3s ease',
             }} />
@@ -246,7 +246,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{
                   width: '28px', height: '28px', borderRadius: '8px',
-                  background: '#5E5CE6',
+                  background: '#000',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -283,8 +283,8 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
                       fontSize: '12px',
                       fontWeight: 500,
                       border: aiInput === ex ? '1px solid #5E5CE6' : '1px solid rgba(0,0,0,0.12)',
-                      background: aiInput === ex ? 'rgba(94,92,230,0.08)' : 'transparent',
-                      color: aiInput === ex ? '#5E5CE6' : '#1D1D1F',
+                      background: aiInput === ex ? 'rgba(0,0,0,0.06)' : 'transparent',
+                      color: aiInput === ex ? '#000' : '#1D1D1F',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                     }}
@@ -317,7 +317,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
                     color: '#1D1D1F',
                     fontFamily: 'inherit',
                     outline: 'none',
-                    boxShadow: aiFocused ? '0 0 0 3px rgba(94,92,230,0.1)' : 'none',
+                    boxShadow: aiFocused ? '0 0 0 3px rgba(0,0,0,0.07)' : 'none',
                     transition: 'all 0.15s ease',
                   }}
                 />
@@ -333,7 +333,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
                     fontWeight: 600,
                     border: 'none',
                     cursor: aiLoading || aiInput.trim().length < 5 ? 'not-allowed' : 'pointer',
-                    background: aiLoading || aiInput.trim().length < 5 ? 'rgba(0,0,0,0.12)' : '#5E5CE6',
+                    background: aiLoading || aiInput.trim().length < 5 ? 'rgba(0,0,0,0.12)' : '#000',
                     color: aiLoading || aiInput.trim().length < 5 ? 'rgba(0,0,0,0.3)' : '#fff',
                     transition: 'all 0.15s ease',
                     flexShrink: 0,
@@ -361,11 +361,11 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
             {/* Result area */}
             <div style={{ padding: '12px 16px', minHeight: '60px' }}>
               {aiLoading && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#5E5CE6' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#000' }}>
                   <div style={{
                     width: '14px', height: '14px',
                     border: '2px solid rgba(94,92,230,0.2)',
-                    borderTopColor: '#5E5CE6',
+                    borderTopColor: '#000',
                     borderRadius: '50%',
                     animation: 'spin 0.6s linear infinite',
                   }} />
@@ -392,7 +392,7 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
               )}
               {!aiLoading && !aiError && !moodboard && (
                 <p style={{ fontSize: '12px', color: '#AEAEB2', margin: 0 }}>
-                  Nhập mô tả và nhấn <strong style={{ color: '#5E5CE6' }}>Phân tích</strong> để AI tạo moodboard
+                  Nhập mô tả và nhấn <strong style={{ color: '#000' }}>Phân tích</strong> để AI tạo moodboard
                 </p>
               )}
               {moodboard && !aiLoading && (

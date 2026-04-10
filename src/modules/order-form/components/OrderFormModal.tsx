@@ -147,7 +147,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
                     width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '11px', fontWeight: 700,
-                    background: i === step ? '#5E5CE6' : i < step ? '#34C759' : 'rgba(0,0,0,0.08)',
+                    background: i === step ? '#000' : i < step ? '#34C759' : 'rgba(0,0,0,0.08)',
                     color: i <= step ? '#fff' : '#AEAEB2',
                     transition: 'all 0.2s ease',
                   }}>
@@ -177,7 +177,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
         {!submitted && (
           <div className="h-[2px] shrink-0" style={{ background: 'rgba(0,0,0,0.06)' }}>
             <div className="h-full transition-all duration-500"
-              style={{ width: `${((step + 1) / 4) * 100}%`, background: '#5E5CE6' }}/>
+              style={{ width: `${((step + 1) / 4) * 100}%`, background: '#000' }}/>
           </div>
         )}
 
@@ -210,7 +210,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
                 </button>
                 <button onClick={() => { setStep(0); setSubmitted(false); setForm({ ...EMPTY, draft_order_id: crypto.randomUUID() }) }}
                   className="px-4 py-2 rounded-[10px] text-[13px] font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: '#5E5CE6' }}>
+                  style={{ background: '#000' }}>
                   Tạo order mới
                 </button>
               </div>
@@ -253,7 +253,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
                   flex: 1, height: '44px', borderRadius: '10px',
                   fontSize: '15px', fontWeight: 600, color: '#fff',
                   border: 'none', cursor: canNext && !submitMutation.isPending ? 'pointer' : 'not-allowed',
-                  background: canNext && !submitMutation.isPending ? '#5E5CE6' : 'rgba(0,0,0,0.12)',
+                  background: canNext && !submitMutation.isPending ? '#000' : 'rgba(0,0,0,0.12)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                   transition: 'all 0.15s ease',
                 }}>

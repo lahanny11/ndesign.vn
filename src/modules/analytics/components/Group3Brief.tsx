@@ -8,7 +8,7 @@ interface Group3BriefProps {
   data: AnalyticsData
 }
 
-const DESIGNER_COLORS = ['#5E5CE6', '#007AFF', '#34C759']
+const DESIGNER_COLORS = ['#2563EB', '#007AFF', '#34C759']
 
 export default function Group3Brief({ data }: Group3BriefProps) {
   const sortedTeams = [...data.revision_by_team].sort((a, b) => b.avg_revisions - a.avg_revisions)
@@ -17,7 +17,7 @@ export default function Group3Brief({ data }: Group3BriefProps) {
   const teamBarItems = sortedTeams.map(t => ({
     label: t.team,
     value: t.avg_revisions,
-    color: '#5E5CE6',
+    color: '#2563EB',
   }))
 
   const lineSeries = data.done_by_designer_monthly.map((d, i) => ({

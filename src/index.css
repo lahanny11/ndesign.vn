@@ -5,32 +5,37 @@
   --font-playfair: 'Playfair Display', serif;
   --font-inter: 'Inter', sans-serif;
 
-  /* Design tokens từ file HTML */
-  --color-acc: #7B8EF7;
-  --color-al:  #EEF0FE;
-  --color-ad:  #5B6FE8;
-  --color-blk: #2D2D3A;
-  --color-w:   #FFFEFE;
-  --color-g50: #FAF9FC;
-  --color-g100:#F2F0F7;
-  --color-g200:#E4E0EF;
-  --color-g300:#CEC9E0;
-  --color-g400:#A89EC0;
-  --color-g600:#6E6488;
-  --color-ok:  #5BB89A;
-  --color-okl: #E4F5F0;
-  --color-warn:#E8925A;
-  --color-warnl:#FEF4EC;
-  --color-red: #E07A7A;
-  --color-redl:#FDEEEE;
+  /* Design tokens — NhiLe brand palette */
+  --color-acc: #000000;
+  --color-al:  #F3F4F6;
+  --color-ad:  #1a1a1a;
+  --color-blk: #1D1D1F;
+  --color-w:   #FFFFFF;
+  --color-g50: #F5F5F7;
+  --color-g100:#F3F4F6;
+  --color-g200:#E5E7EB;
+  --color-g300:#D1D5DB;
+  --color-g400:#9CA3AF;
+  --color-g600:#6B7280;
+  --color-ok:  #16A34A;
+  --color-okl: #F0FDF4;
+  --color-warn:#EA580C;
+  --color-warnl:#FFF7ED;
+  --color-red: #E11D48;
+  --color-redl:#FFF1F2;
+  --color-blue:#2563EB;
+  --color-bluel:#EFF6FF;
+  --color-navy:#1B3A6B;
+  --color-teal:#00838F;
+  --color-gold:#E07B39;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-  background: #FAF9FC;
-  color: #2D2D3A;
+  background: #F5F5F7;
+  color: #1D1D1F;
   -webkit-font-smoothing: antialiased;
   height: 100vh;
   overflow: hidden;

@@ -24,7 +24,7 @@ export default function Group2Quality({ data }: Group2QualityProps) {
   const barItems = sortedDesigners.map(d => ({
     label: d.name,
     value: d.avg_revisions,
-    color: '#5E5CE6',
+    color: '#2563EB',
   }))
 
   return (

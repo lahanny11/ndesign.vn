@@ -4,7 +4,7 @@ interface DonutChartProps {
   items: TaskTypeMetric[]
 }
 
-const COLORS = ['#5E5CE6', '#007AFF', '#34C759', '#FF9F0A', '#FF3B30']
+const COLORS = ['#2563EB', '#007AFF', '#34C759', '#FF9F0A', '#FF3B30']
 
 const CX = 60
 const CY = 60

@@ -122,7 +122,7 @@ export default function WeeklyChecklist() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: '#5E5CE6' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: '#2563EB' }}>
             {doneCount}/7 hoàn thành
           </span>
           <button
@@ -149,7 +149,7 @@ export default function WeeklyChecklist() {
           height: '100%',
           width: `${progressPct}%`,
           borderRadius: 3,
-          background: progressPct === 100 ? '#34C759' : '#5E5CE6',
+          background: progressPct === 100 ? '#34C759' : '#2563EB',
           transition: 'width 0.3s ease',
         }} />
       </div>
@@ -181,7 +181,7 @@ export default function WeeklyChecklist() {
                 height: 20,
                 borderRadius: '50%',
                 border: isChecked ? 'none' : '2px solid rgba(0,0,0,0.18)',
-                background: isChecked ? '#5E5CE6' : 'transparent',
+                background: isChecked ? '#2563EB' : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

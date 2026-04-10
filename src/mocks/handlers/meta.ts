@@ -53,49 +53,54 @@ export const metaHandlers = [
   http.get(`${BASE}/api/v1/meta/product-types`, () => {
     return HttpResponse.json([
       {
-        id: 'pt-1', name: 'Social Media', slug: 'social-media',
+        id: 'pt-1', name: 'Ảnh Quote / Hình vuông', slug: 'quote-square',
         standard_sizes: [
-          { name: 'Feed Post', width: 1080, height: 1080, unit: 'px' },
-          { name: 'Story / Reels', width: 1080, height: 1920, unit: 'px' },
-          { name: 'Cover Facebook', width: 820, height: 312, unit: 'px' },
-          { name: 'Banner Web', width: 1200, height: 400, unit: 'px' },
+          { name: 'Instagram Feed', width: 1200, height: 1200, unit: 'px', platform: 'Instagram', platform_color: '#E1306C' },
+          { name: 'LinkedIn / Facebook Post', width: 1200, height: 1200, unit: 'px', platform: 'LinkedIn · Facebook', platform_color: '#0A66C2' },
+          { name: 'Pinterest Pin', width: 1000, height: 1500, unit: 'px', platform: 'Pinterest', platform_color: '#E60023' },
         ],
       },
       {
-        id: 'pt-2', name: 'LinkedIn', slug: 'linkedin',
+        id: 'pt-2', name: 'Banner / Cover', slug: 'banner-cover',
         standard_sizes: [
-          { name: 'Post', width: 1200, height: 627, unit: 'px' },
-          { name: 'Banner Profile', width: 1584, height: 396, unit: 'px' },
+          { name: 'Facebook Cover', width: 820, height: 360, unit: 'px', platform: 'Facebook', platform_color: '#1877F2' },
+          { name: 'YouTube Channel Banner', width: 2560, height: 1440, unit: 'px', platform: 'YouTube', platform_color: '#FF0000' },
+          { name: 'LinkedIn Profile Cover', width: 1584, height: 396, unit: 'px', platform: 'LinkedIn', platform_color: '#0A66C2' },
+          { name: 'LinkedIn Company Banner', width: 1128, height: 191, unit: 'px', platform: 'LinkedIn', platform_color: '#0A66C2' },
         ],
       },
       {
-        id: 'pt-3', name: 'YouTube', slug: 'youtube',
+        id: 'pt-3', name: 'Poster / Dọc', slug: 'poster-doc',
         standard_sizes: [
-          { name: 'Thumbnail', width: 1280, height: 720, unit: 'px' },
-          { name: 'Channel Banner', width: 2560, height: 1440, unit: 'px' },
-          { name: 'End Card', width: 1920, height: 1080, unit: 'px' },
+          { name: 'Instagram Story / Reel / TikTok', width: 1080, height: 1920, unit: 'px', platform: 'Instagram · TikTok', platform_color: '#E1306C' },
+          { name: 'Facebook Story', width: 1080, height: 1920, unit: 'px', platform: 'Facebook', platform_color: '#1877F2' },
+          { name: 'Pinterest Pin Dọc', width: 1000, height: 1500, unit: 'px', platform: 'Pinterest', platform_color: '#E60023' },
+          { name: 'YouTube Shorts', width: 1080, height: 1920, unit: 'px', platform: 'YouTube', platform_color: '#FF0000' },
         ],
       },
       {
-        id: 'pt-4', name: 'Print', slug: 'print',
+        id: 'pt-4', name: 'Thumbnail', slug: 'thumbnail',
         standard_sizes: [
-          { name: 'A4', width: 210, height: 297, unit: 'mm' },
-          { name: 'A3', width: 297, height: 420, unit: 'mm' },
-          { name: 'A5', width: 148, height: 210, unit: 'mm' },
-          { name: 'Business Card', width: 90, height: 55, unit: 'mm' },
-          { name: 'Standee 60×160', width: 600, height: 1600, unit: 'mm' },
+          { name: 'YouTube Thumbnail', width: 1280, height: 720, unit: 'px', platform: 'YouTube', platform_color: '#FF0000' },
+          { name: 'Reels Thumbnail (Instagram)', width: 1080, height: 1920, unit: 'px', platform: 'Instagram', platform_color: '#E1306C' },
+          { name: 'TikTok Cover', width: 1080, height: 1920, unit: 'px', platform: 'TikTok', platform_color: '#010101' },
+          { name: 'Facebook Reels Thumbnail', width: 1080, height: 1920, unit: 'px', platform: 'Facebook', platform_color: '#1877F2' },
         ],
       },
       {
-        id: 'pt-5', name: 'Email', slug: 'email',
+        id: 'pt-5', name: 'Custom / Tuỳ chỉnh', slug: 'custom',
         standard_sizes: [
-          { name: 'Email Header', width: 600, height: 200, unit: 'px' },
-          { name: 'Newsletter', width: 600, height: 900, unit: 'px' },
+          { name: 'Custom / Khác', width: null, height: null, unit: null, platform: 'Tuỳ chỉnh kích thước', platform_color: '#6B7280' },
         ],
       },
       {
-        id: 'pt-6', name: 'Custom', slug: 'custom',
-        standard_sizes: [],
+        id: 'pt-6', name: 'Mailing List', slug: 'mailing-list',
+        standard_sizes: [
+          { name: 'Header Banner', width: 600, height: 200, unit: 'px', platform: 'Email', platform_color: '#2563EB' },
+          { name: 'Full Template', width: 600, height: 1200, unit: 'px', platform: 'Email', platform_color: '#2563EB' },
+          { name: 'Section Block', width: 600, height: 400, unit: 'px', platform: 'Email', platform_color: '#2563EB' },
+          { name: 'Footer', width: 600, height: 150, unit: 'px', platform: 'Email', platform_color: '#2563EB' },
+        ],
       },
     ])
   }),

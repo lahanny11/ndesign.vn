@@ -160,7 +160,7 @@ function RoleSwitcher() {
           whiteSpace: 'nowrap',
         }}
       >
-        <span style={{ color: '#5E5CE6', display: 'flex', alignItems: 'center' }}>{current.icon}</span>
+        <span style={{ color: '#1D1D1F', display: 'flex', alignItems: 'center' }}>{current.icon}</span>
         {current.label}
         <span style={{ color: '#AEAEB2', display: 'flex', alignItems: 'center' }}>{Icons.chevronDown}</span>
       </button>
@@ -192,8 +192,8 @@ function RoleSwitcher() {
                 cursor: 'pointer',
                 border: 'none',
                 textAlign: 'left',
-                background: role === opt.value ? 'rgba(94,92,230,0.08)' : 'transparent',
-                color: role === opt.value ? '#5E5CE6' : '#1D1D1F',
+                background: role === opt.value ? 'rgba(0,0,0,0.07)' : 'transparent',
+                color: role === opt.value ? '#000' : '#1D1D1F',
                 fontWeight: role === opt.value ? 600 : 400,
               }}
               onMouseEnter={e => {
@@ -202,10 +202,10 @@ function RoleSwitcher() {
                 }
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.background = role === opt.value ? 'rgba(94,92,230,0.08)' : 'transparent'
+                (e.currentTarget as HTMLButtonElement).style.background = role === opt.value ? 'rgba(0,0,0,0.07)' : 'transparent'
               }}
             >
-              <span style={{ color: role === opt.value ? '#5E5CE6' : '#6E6E73', display: 'flex', alignItems: 'center' }}>{opt.icon}</span>
+              <span style={{ color: role === opt.value ? '#000' : '#6E6E73', display: 'flex', alignItems: 'center' }}>{opt.icon}</span>
               {opt.label}
             </button>
           ))}
@@ -241,7 +241,7 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
         style={{ borderRight: '1px solid rgba(0,0,0,0.08)' }}>
         {/* Logo */}
         <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-5 shrink-0"
-          style={{ background: '#5E5CE6' }}>
+          style={{ background: '#000' }}>
           <span className="text-white text-[15px] font-bold" style={{ fontFamily: 'Georgia, serif', letterSpacing: '-0.5px' }}>N</span>
         </div>
 
@@ -255,10 +255,10 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
                   onClick={() => navigate(item.route)}
                   className={`w-full h-11 rounded-[10px] flex items-center justify-center transition-all duration-150
                     ${isActive
-                      ? 'text-[#5E5CE6]'
+                      ? 'text-white'
                       : 'text-[#AEAEB2] hover:text-[#3A3A3C] hover:bg-black/[0.04]'
                     }`}
-                  style={isActive ? { background: 'rgba(94,92,230,0.1)' } : {}}
+                  style={isActive ? { background: '#000' } : {}}
                 >
                   {item.icon}
                 </button>
@@ -277,7 +277,7 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
         {/* User avatar */}
         <div className="relative group mt-auto">
           <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-semibold cursor-pointer"
-            style={{ background: '#5E5CE6' }}>
+            style={{ background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)' }}>
             {user?.display_name?.[0] ?? 'U'}
           </div>
           <div className="absolute left-full ml-3 bottom-0 px-2.5 py-1.5 bg-[#1D1D1F] text-white
@@ -317,8 +317,8 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
                 }}
                 onFocus={e => {
                   e.target.style.background = '#fff'
-                  e.target.style.border = '1px solid rgba(94,92,230,0.4)'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(94,92,230,0.1)'
+                  e.target.style.border = '1px solid rgba(0,0,0,0.3)'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.06)'
                 }}
                 onBlur={e => {
                   e.target.style.background = 'rgba(0,0,0,0.05)'
@@ -346,8 +346,8 @@ export default function AppLayout({ children, onCreateOrder, activeNav, title }:
             {onCreateOrder && (
               <button onClick={onCreateOrder}
                 className="flex items-center gap-1.5 h-9 px-4 rounded-[10px] text-[13px] font-semibold text-white
-                  transition-all hover:opacity-90 active:scale-[0.97]"
-                style={{ background: '#5E5CE6' }}>
+                  transition-all hover:opacity-80 active:scale-[0.97]"
+                style={{ background: '#000' }}>
                 {Icons.plus}
                 Tạo order
               </button>

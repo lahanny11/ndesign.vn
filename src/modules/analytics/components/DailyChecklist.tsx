@@ -130,7 +130,7 @@ export default function DailyChecklist() {
           height: '100%',
           width: `${progressPct}%`,
           borderRadius: 3,
-          background: progressPct === 100 ? '#34C759' : '#5E5CE6',
+          background: progressPct === 100 ? '#34C759' : '#2563EB',
           transition: 'width 0.3s ease',
         }} />
       </div>
