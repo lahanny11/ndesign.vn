@@ -115,84 +115,131 @@ export default function OrderFormModal({ open, onClose }: Props) {
         }}>
 
         {/* Header */}
-        <div className="px-7 py-5 flex items-center justify-between shrink-0"
-          style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+        <div style={{
+          padding: '20px 24px 16px',
+          borderBottom: '1px solid rgba(0,0,0,0.07)',
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 12,
+        }}>
           {submitted ? (
-            <p style={{ fontSize: '17px', fontWeight: 700, color: '#1D1D1F' }}>Đã gửi thành công</p>
+            <p style={{ fontSize: 17, fontWeight: 700, color: '#1D1D1F', margin: 0 }}>Đã gửi thành công</p>
           ) : (
             <div>
-              <p style={{ fontSize: '17px', fontWeight: 700, color: '#1D1D1F', margin: 0 }}>{STEPS[step].label}</p>
-              <p style={{ fontSize: '13px', color: '#AEAEB2', margin: '3px 0 0' }}>{STEPS[step].sub}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                <div style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: '#1D1D1F', flexShrink: 0,
+                }}/>
+                <p style={{
+                  fontSize: 17, fontWeight: 700, color: '#1D1D1F',
+                  margin: 0, letterSpacing: '-0.02em',
+                }}>
+                  {STEPS[step].label}
+                </p>
+              </div>
+              <p style={{ fontSize: 12, color: '#AEAEB2', margin: 0, paddingLeft: 14 }}>
+                {STEPS[step].sub}
+              </p>
             </div>
           )}
-          <button onClick={handleClose}
-            style={{ width: '30px', height: '30px', borderRadius: '50%', border: 'none', cursor: 'pointer',
-              background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#6E6E73', flexShrink: 0 }}>
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-              <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <button
+            onClick={handleClose}
+            style={{
+              width: 30, height: 30, borderRadius: '50%', border: 'none', cursor: 'pointer',
+              background: 'rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', color: '#6E6E73', flexShrink: 0,
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,0,0,0.11)'
+              e.currentTarget.style.color = '#1D1D1F'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(0,0,0,0.06)'
+              e.currentTarget.style.color = '#6E6E73'
+            }}
+          >
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
+              <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
             </svg>
           </button>
         </div>
 
-        {/* Step indicator */}
+        {/* Step indicator — Apple-style segmented */}
         {!submitted && (
           <div style={{
-            padding: '10px 28px',
-            borderBottom: '1px solid rgba(0,0,0,0.06)',
-            background: 'rgba(0,0,0,0.012)',
+            padding: '14px 24px',
+            background: '#F5F5F7',
+            borderBottom: '1px solid rgba(0,0,0,0.07)',
             flexShrink: 0,
             display: 'flex',
             alignItems: 'center',
+            gap: 0,
           }}>
-            {STEPS.map((s, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < STEPS.length - 1 ? 1 : 'none' }}>
-                {/* Step pill */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0 }}>
-                  <div style={{
-                    width: 20, height: 20, borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 10, fontWeight: 700, flexShrink: 0,
-                    background: i === step ? '#1D1D1F' : i < step ? '#16A34A' : 'rgba(0,0,0,0.07)',
-                    color: i <= step ? '#fff' : '#C7C7CC',
-                    transition: 'all 0.2s ease',
-                  }}>
-                    {i < step ? (
-                      <svg width="9" height="9" fill="none" viewBox="0 0 24 24">
-                        <polyline points="20 6 9 17 4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ) : i + 1}
+            {STEPS.map((s, i) => {
+              const isDone    = i < step
+              const isActive  = i === step
+              const isPending = i > step
+              return (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < STEPS.length - 1 ? 1 : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                    {/* Circle */}
+                    <div style={{
+                      width: 26, height: 26, borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 11, fontWeight: 700, flexShrink: 0,
+                      transition: 'all 0.25s ease',
+                      background: isActive ? '#1D1D1F' : isDone ? '#16A34A' : 'rgba(0,0,0,0.10)',
+                      color: isActive || isDone ? '#fff' : '#AEAEB2',
+                      boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.22)' : 'none',
+                    }}>
+                      {isDone ? (
+                        <svg width="11" height="11" fill="none" viewBox="0 0 24 24">
+                          <polyline points="20 6 9 17 4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      ) : i + 1}
+                    </div>
+                    {/* Label */}
+                    <span style={{
+                      fontSize: 13,
+                      fontWeight: isActive ? 600 : 400,
+                      color: isActive ? '#1D1D1F' : isDone ? '#16A34A' : '#AEAEB2',
+                      letterSpacing: isActive ? '-0.01em' : 0,
+                      transition: 'all 0.2s',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {s.label}
+                    </span>
                   </div>
-                  <span style={{
-                    fontSize: 11,
-                    fontWeight: i === step ? 600 : 400,
-                    color: i === step ? '#1D1D1F' : i < step ? '#16A34A' : '#AEAEB2',
-                    letterSpacing: i === step ? '-0.01em' : 0,
-                    transition: 'all 0.2s ease',
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {s.label}
-                  </span>
+                  {/* Connector line */}
+                  {i < STEPS.length - 1 && (
+                    <div style={{
+                      flex: 1, height: 1.5, margin: '0 10px',
+                      borderRadius: 99,
+                      background: isPending ? 'rgba(0,0,0,0.1)' : '#16A34A',
+                      transition: 'background 0.35s ease',
+                    }}/>
+                  )}
                 </div>
-                {/* Connector */}
-                {i < STEPS.length - 1 && (
-                  <div style={{
-                    flex: 1, height: 1, margin: '0 8px',
-                    background: i < step ? 'rgba(22,163,74,0.3)' : 'rgba(0,0,0,0.08)',
-                    transition: 'background 0.3s ease',
-                  }}/>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
 
-        {/* Progress bar */}
+        {/* Progress bar — thin accent line */}
         {!submitted && (
-          <div className="h-[2px] shrink-0" style={{ background: 'rgba(0,0,0,0.06)' }}>
-            <div className="h-full transition-all duration-500"
-              style={{ width: `${((step + 1) / 4) * 100}%`, background: '#000' }}/>
+          <div style={{ height: 2, background: 'rgba(0,0,0,0.06)', flexShrink: 0 }}>
+            <div style={{
+              height: '100%',
+              width: `${((step + 1) / 4) * 100}%`,
+              background: '#1D1D1F',
+              borderRadius: '0 2px 2px 0',
+              transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}/>
           </div>
         )}
 
@@ -231,7 +278,7 @@ export default function OrderFormModal({ open, onClose }: Props) {
               </div>
             </div>
           ) : (
-            <div className="px-7 py-6">
+            <div style={{ padding: '24px 24px 20px' }}>
               {step === 0 && <Step1BasicInfo data={form.step1} onChange={upd1} teams={teams} orderers={orderers} />}
               {step === 1 && <Step2ProductType data={form.step2} onChange={upd2} productTypes={productTypes} />}
               {step === 2 && <Step3Brief data={form.step3} onChange={upd3} draftOrderId={form.draft_order_id} />}
@@ -242,39 +289,65 @@ export default function OrderFormModal({ open, onClose }: Props) {
 
         {/* Footer */}
         {!submitted && (
-          <div style={{ padding: '16px 28px', borderTop: '1px solid rgba(0,0,0,0.08)', background: 'rgba(0,0,0,0.015)', flexShrink: 0 }}>
+          <div style={{
+            padding: '14px 24px 18px',
+            borderTop: '1px solid rgba(0,0,0,0.07)',
+            background: '#F5F5F7',
+            flexShrink: 0,
+          }}>
             {!canNext && hint && (
-              <p style={{ fontSize: '13px', color: '#AEAEB2', marginBottom: '12px', textAlign: 'center' }}>{hint}</p>
+              <p style={{
+                fontSize: 12, color: '#AEAEB2', marginBottom: 10,
+                textAlign: 'center', letterSpacing: '-0.01em',
+              }}>
+                {hint}
+              </p>
             )}
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: 10 }}>
               {step > 0 && (
                 <button
                   onClick={() => setStep(s => s - 1)}
                   style={{
-                    padding: '0 20px', height: '44px', borderRadius: '10px',
-                    fontSize: '14px', fontWeight: 500, color: '#1D1D1F',
-                    background: 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer',
-                    transition: 'background 0.15s ease', flexShrink: 0,
+                    padding: '0 20px', height: 46, borderRadius: 12,
+                    fontSize: 14, fontWeight: 500, color: '#1D1D1F',
+                    background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer',
+                    transition: 'background 0.15s', flexShrink: 0,
+                    letterSpacing: '-0.01em',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.1)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}>
-                  Quay lại
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.12)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.07)')}>
+                  ← Quay lại
                 </button>
               )}
               <button
                 onClick={handleNext}
                 disabled={!canNext || submitMutation.isPending}
                 style={{
-                  flex: 1, height: '44px', borderRadius: '10px',
-                  fontSize: '15px', fontWeight: 600, color: '#fff',
-                  border: 'none', cursor: canNext && !submitMutation.isPending ? 'pointer' : 'not-allowed',
-                  background: canNext && !submitMutation.isPending ? '#000' : 'rgba(0,0,0,0.12)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  transition: 'all 0.15s ease',
-                }}>
+                  flex: 1, height: 46, borderRadius: 12,
+                  fontSize: 14, fontWeight: 600, color: '#fff',
+                  border: 'none',
+                  cursor: canNext && !submitMutation.isPending ? 'pointer' : 'not-allowed',
+                  background: canNext && !submitMutation.isPending ? '#1D1D1F' : 'rgba(0,0,0,0.14)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  transition: 'all 0.15s',
+                  letterSpacing: '-0.01em',
+                  boxShadow: canNext && !submitMutation.isPending
+                    ? '0 2px 8px rgba(0,0,0,0.18)' : 'none',
+                }}
+                onMouseEnter={e => { if (canNext) e.currentTarget.style.opacity = '0.85' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+              >
                 {submitMutation.isPending ? (
-                  <><div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}/>Đang gửi...</>
-                ) : step === 3 ? 'Gửi order' : 'Tiếp theo →'}
+                  <>
+                    <div style={{
+                      width: 15, height: 15,
+                      border: '2px solid rgba(255,255,255,0.3)',
+                      borderTopColor: '#fff', borderRadius: '50%',
+                      animation: 'spin 0.6s linear infinite',
+                    }}/>
+                    Đang gửi...
+                  </>
+                ) : step === 3 ? '✓ Gửi order' : 'Tiếp theo →'}
               </button>
             </div>
             {error && (

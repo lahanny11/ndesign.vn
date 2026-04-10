@@ -98,24 +98,26 @@ export default function Step3Brief({ data, onChange, draftOrderId }: Props) {
 
   const inputBase: React.CSSProperties = {
     width: '100%',
-    background: 'rgba(0,0,0,0.04)',
-    border: '1px solid transparent',
-    borderRadius: 10,
-    padding: '10px 13px',
-    fontSize: 13,
+    background: '#fff',
+    border: '1px solid rgba(0,0,0,0.15)',
+    borderRadius: 11,
+    padding: '10px 14px',
+    fontSize: 14,
     color: '#1D1D1F',
     fontFamily: 'inherit',
     outline: 'none',
     transition: 'all 0.15s ease',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
   }
   const inputFocus: React.CSSProperties = {
     background: '#fff',
-    border: '1px solid rgba(0,0,0,0.25)',
-    boxShadow: '0 0 0 3px rgba(0,0,0,0.05)',
+    border: '1.5px solid #1D1D1F',
+    boxShadow: '0 0 0 3px rgba(0,0,0,0.06)',
   }
   const inputDone: React.CSSProperties = {
-    background: 'rgba(22,163,74,0.04)',
-    border: '1px solid rgba(22,163,74,0.22)',
+    background: 'rgba(22,163,74,0.03)',
+    border: '1.5px solid rgba(22,163,74,0.4)',
+    boxShadow: '0 1px 2px rgba(22,163,74,0.06)',
   }
 
   return (

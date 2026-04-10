@@ -18,18 +18,18 @@ const T = {
   labelColor:  '#6E6E73',
   hintSize:    '11px',
   hintColor:   '#AEAEB2',
-  inputH:      '42px',
-  inputFont:   '13px',
-  inputRadius: '10px',
-  inputPad:    '0 13px',
-  gap:         '18px',
+  inputH:      '44px',
+  inputFont:   '14px',
+  inputRadius: '11px',
+  inputPad:    '0 14px',
+  gap:         '20px',
 }
 
 const inputBase: React.CSSProperties = {
   width: '100%',
   height: T.inputH,
-  background: 'rgba(0,0,0,0.04)',
-  border: '1px solid transparent',
+  background: '#fff',
+  border: '1px solid rgba(0,0,0,0.15)',
   borderRadius: T.inputRadius,
   padding: T.inputPad,
   fontSize: T.inputFont,
@@ -39,27 +39,34 @@ const inputBase: React.CSSProperties = {
   transition: 'all 0.15s ease',
   appearance: 'none' as const,
   boxSizing: 'border-box' as const,
+  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
 }
 const inputFocus: React.CSSProperties = {
   background: '#fff',
-  border: '1px solid rgba(0,0,0,0.25)',
-  boxShadow: '0 0 0 3px rgba(0,0,0,0.05)',
+  border: '1.5px solid #1D1D1F',
+  boxShadow: '0 0 0 3px rgba(0,0,0,0.06)',
 }
 const inputDone: React.CSSProperties = {
-  background: 'rgba(22,163,74,0.04)',
-  border: '1px solid rgba(22,163,74,0.25)',
+  background: 'rgba(22,163,74,0.03)',
+  border: '1.5px solid rgba(22,163,74,0.4)',
+  boxShadow: '0 1px 2px rgba(22,163,74,0.06)',
 }
 
 function Label({ text, required }: { text: string; required?: boolean }) {
   return (
-    <div style={{ marginBottom: 6 }}>
+    <div style={{ marginBottom: 7, display: 'flex', alignItems: 'center', gap: 4 }}>
       <span style={{
-        fontSize: T.labelSize, fontWeight: T.labelWeight, color: T.labelColor,
-        textTransform: 'uppercase', letterSpacing: '0.04em',
+        fontSize: T.labelSize, fontWeight: T.labelWeight, color: '#3A3A3C',
+        textTransform: 'uppercase', letterSpacing: '0.06em',
       }}>
         {text}
       </span>
-      {required && <span style={{ color: '#E11D48', marginLeft: '3px', fontSize: T.labelSize }}>*</span>}
+      {required && (
+        <span style={{
+          width: 5, height: 5, borderRadius: '50%',
+          background: '#E11D48', display: 'inline-block', flexShrink: 0,
+        }}/>
+      )}
     </div>
   )
 }
