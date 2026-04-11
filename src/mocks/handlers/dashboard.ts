@@ -48,11 +48,15 @@ export const dashboardHandlers = [
 
     // Role-based filtering
     if (role === 'designer') {
-      orders = orders.filter(o => o.designer_name === 'Lê Văn A')
+      // Designer thấy: task của họ + pool pending chưa assign (để self-assign)
+      orders = orders.filter(o =>
+        o.designer_name === 'Lê Văn A' ||
+        (o.status === 'pending' && o.designer_name === null)
+      )
     } else if (role === 'orderer') {
       orders = orders.filter(o => o.team_name === 'Social Content' || o.team_id === 'team-social')
     }
-    // design_leader: sees all — no filter
+    // design_leader + co_leader: sees all — no filter
 
     if (status) {
       const statuses = status.split(',')

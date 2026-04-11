@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type AppRole = 'design_leader' | 'designer' | 'orderer'
+export type AppRole = 'design_leader' | 'co_leader' | 'designer' | 'orderer'
 
 interface RoleStore {
   role: AppRole
@@ -11,7 +11,7 @@ interface RoleStore {
 function getRoleFromUrl(): AppRole {
   const params = new URLSearchParams(window.location.search)
   const r = params.get('role')
-  if (r === 'designer' || r === 'orderer' || r === 'design_leader') return r
+  if (r === 'designer' || r === 'orderer' || r === 'design_leader' || r === 'co_leader') return r
   return 'design_leader' // default
 }
 

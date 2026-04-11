@@ -5,9 +5,11 @@ interface Props {
   orders: OrderCardType[]
   loading?: boolean
   onTrack: (id: string) => void
+  onSelfAssign?: (id: string) => void
+  selfAssigningId?: string | null
 }
 
-export default function OrderGrid({ orders, loading, onTrack }: Props) {
+export default function OrderGrid({ orders, loading, onTrack, onSelfAssign, selfAssigningId }: Props) {
   if (loading) return (
     <div className="grid grid-cols-4 gap-2.5">
       {[...Array(8)].map((_, i) => (
@@ -29,7 +31,14 @@ export default function OrderGrid({ orders, loading, onTrack }: Props) {
   return (
     <div className="grid grid-cols-4 gap-2.5 pb-5 items-start">
       {orders.map((order, i) => (
-        <OrderCard key={order.id} order={order} onTrack={onTrack} index={i} />
+        <OrderCard
+          key={order.id}
+          order={order}
+          onTrack={onTrack}
+          index={i}
+          onSelfAssign={onSelfAssign}
+          selfAssigning={selfAssigningId === order.id}
+        />
       ))}
     </div>
   )

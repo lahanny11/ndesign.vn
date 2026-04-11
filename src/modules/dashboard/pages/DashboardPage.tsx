@@ -10,6 +10,7 @@ import OrderFormModal from '../../order-form/components/OrderFormModal'
 import { useDashboardStore } from '../stores/dashboard.store'
 import { useOrders } from '../hooks/useOrders'
 import { useDashboardStats } from '../hooks/useDashboardStats'
+import { useSelfAssign } from '../hooks/useSelfAssign'
 import { useOrderDetail } from '../../tracking/hooks/useOrderDetail'
 import { useCurrentUser } from '../../../shared/hooks/useCurrentUser'
 import { useRoleStore } from '../../../shared/stores/role.store'
@@ -90,10 +91,10 @@ const ORDERER_TABS: { key: FilterTab; label: string }[] = [
 
 // Designer filter tabs
 const DESIGNER_TABS: { key: FilterTab; label: string }[] = [
-  { key: 'all', label: 'Tất cả' },
-  { key: 'pending', label: 'Cần làm' },
-  { key: 'active', label: 'Đang làm' },
-  { key: 'done', label: 'Done' },
+  { key: 'all',     label: 'Tất cả' },
+  { key: 'pending', label: 'Chờ nhận' },   // pool order có thể self-assign
+  { key: 'active',  label: 'Đang làm' },
+  { key: 'done',    label: 'Done' },
 ]
 
 interface SimplifiedTabsProps {
@@ -140,6 +141,7 @@ function SimplifiedTabs({ tabs, active, onChange, total, title }: SimplifiedTabs
 export default function DashboardPage() {
   const { activeTab, setActiveTab, panelOrderId, openPanel, closePanel } = useDashboardStore()
   const [formOpen, setFormOpen] = useState(false)
+  const [selfAssigningId, setSelfAssigningId] = useState<string | null>(null)
 
   const role = useRoleStore(s => s.role)
   const { data: user } = useCurrentUser()
@@ -147,9 +149,13 @@ export default function DashboardPage() {
   const { data: ordersData, isLoading: ordersLoading } = useOrders(activeTab)
   const { data: stats, isLoading: statsLoading } = useDashboardStats()
   const { data: orderDetail } = useOrderDetail(panelOrderId)
+  const selfAssign = useSelfAssign()
 
   const orders = ordersData?.data ?? []
   const flaggedOrders = orders.filter(o => o.has_red_flag).map(o => o.task_name)
+
+  // isLeader — design_leader hoặc co_leader có cùng quyền quản lý
+  const isLeader = role === 'design_leader' || role === 'co_leader'
 
   // Page title by role
   const pageTitle = role === 'orderer'
@@ -157,6 +163,16 @@ export default function DashboardPage() {
     : role === 'designer'
       ? 'Task của tôi'
       : 'Quản lý Order'
+
+  function handleSelfAssign(orderId: string) {
+    setSelfAssigningId(orderId)
+    selfAssign.mutate(orderId, {
+      onSettled: () => setSelfAssigningId(null),
+      onError: (err) => {
+        alert(err?.message ?? 'Không thể nhận task. Vui lòng thử lại.')
+      },
+    })
+  }
 
   // Greeting by role
   const activeOrderCount = orders.filter(o => ['assigned', 'in_progress', 'feedback', 'delivered'].includes(o.status)).length
@@ -174,13 +190,13 @@ export default function DashboardPage() {
   return (
     <>
       <AppLayout
-        onCreateOrder={role === 'orderer' || role === 'design_leader' ? () => setFormOpen(true) : undefined}
+        onCreateOrder={role === 'orderer' || role === 'design_leader' || role === 'co_leader' ? () => setFormOpen(true) : undefined}
         title={pageTitle}
       >
         <div className="flex flex-col gap-3.5">
 
-          {/* ── DESIGN LEADER VIEW ── */}
-          {role === 'design_leader' && (
+          {/* ── LEADER VIEW (design_leader + co_leader) ── */}
+          {isLeader && (
             <>
               <StatCards
                 stats={stats ?? {
@@ -351,8 +367,14 @@ export default function DashboardPage() {
             </>
           )}
 
-          {/* Order grid — all roles */}
-          <OrderGrid orders={orders} loading={ordersLoading} onTrack={openPanel} />
+          {/* Order grid — all roles. Designer thấy nút "Nhận task" trên pending orders */}
+          <OrderGrid
+            orders={orders}
+            loading={ordersLoading}
+            onTrack={openPanel}
+            onSelfAssign={role === 'designer' ? handleSelfAssign : undefined}
+            selfAssigningId={selfAssigningId}
+          />
         </div>
 
         <TrackingPanel order={orderDetail ?? null} open={!!panelOrderId} onClose={closePanel} />

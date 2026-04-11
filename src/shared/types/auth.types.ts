@@ -1,4 +1,4 @@
-export type UserRole = 'orderer' | 'designer' | 'design_leader'
+export type UserRole = 'orderer' | 'designer' | 'design_leader' | 'co_leader'
 
 export interface Team {
   id: string

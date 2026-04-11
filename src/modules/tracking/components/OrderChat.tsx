@@ -58,9 +58,10 @@ const DEFAULT_MESSAGES: ChatMessage[] = [
 ]
 
 const ROLE_BADGE: Record<AppRole, { label: string; color: string }> = {
-  design_leader: { label: 'Leader', color: '#000' },
-  designer:      { label: 'Designer', color: '#34C759' },
-  orderer:       { label: 'Orderer', color: '#FF9F0A' },
+  design_leader: { label: 'Leader',     color: '#000' },
+  co_leader:     { label: 'Co-Leader',  color: '#6C47FF' },
+  designer:      { label: 'Designer',   color: '#34C759' },
+  orderer:       { label: 'Orderer',    color: '#FF9F0A' },
 }
 
 function formatTime(iso: string): string {

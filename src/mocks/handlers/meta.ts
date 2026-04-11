@@ -23,9 +23,10 @@ export const SYSTEM_USERS = [
   { id: 'u-ac-1', display_name: 'Minh Tú',    email: 'minhtu@nhile.vn',    role: 'orderer', team_id: 'team-academy', team_name: 'Academy' },
   { id: 'u-ac-2', display_name: 'Hồng Ngọc',  email: 'hongngoc@nhile.vn',  role: 'orderer', team_id: 'team-academy', team_name: 'Academy' },
   // Admin
-  { id: 'u-ad-1', display_name: 'Nhi Le',     email: 'nhile@nhile.vn',     role: 'design_leader', team_id: 'team-admin', team_name: 'Admin' },
-  { id: 'u-ad-2', display_name: 'Felix',       email: 'felix@nhile.vn',     role: 'orderer', team_id: 'team-admin', team_name: 'Admin' },
-  { id: 'u-ad-3', display_name: 'Lan Anh',    email: 'lananh@nhile.vn',    role: 'orderer', team_id: 'team-admin', team_name: 'Admin' },
+  { id: 'u-ad-1', display_name: 'Nhi Le',      email: 'nhile@nhile.vn',     role: 'design_leader', team_id: 'team-admin', team_name: 'Admin' },
+  { id: 'u-ad-4', display_name: 'Thùy Linh',   email: 'thuylinh@nhile.vn',  role: 'co_leader',     team_id: 'team-admin', team_name: 'Admin' },
+  { id: 'u-ad-2', display_name: 'Felix',        email: 'felix@nhile.vn',     role: 'orderer',       team_id: 'team-admin', team_name: 'Admin' },
+  { id: 'u-ad-3', display_name: 'Lan Anh',      email: 'lananh@nhile.vn',    role: 'orderer',       team_id: 'team-admin', team_name: 'Admin' },
   // Design
   { id: 'u-de-1', display_name: 'Lê Văn A',   email: 'leva@nhile.vn',      role: 'designer', team_id: 'team-design', team_name: 'Design' },
   { id: 'u-de-2', display_name: 'Trần Thị B', email: 'tranthib@nhile.vn',  role: 'designer', team_id: 'team-design', team_name: 'Design' },
@@ -130,6 +131,11 @@ export const metaHandlers = [
       design_leader: {
         id: 'u-ad-1', email: 'nhile@nhile.vn', display_name: 'Nhi Le',
         avatar_url: null, role: 'design_leader',
+        team: { id: 'team-admin', name: 'Admin', slug: 'admin' }, is_active: true,
+      },
+      co_leader: {
+        id: 'u-ad-4', email: 'thuylinh@nhile.vn', display_name: 'Thùy Linh',
+        avatar_url: null, role: 'co_leader',
         team: { id: 'team-admin', name: 'Admin', slug: 'admin' }, is_active: true,
       },
       designer: {

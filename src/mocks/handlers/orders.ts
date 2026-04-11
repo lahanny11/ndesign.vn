@@ -100,6 +100,41 @@ export const orderHandlers = [
     })
   }),
 
+  // ─── POST /orders/:id/self-assign — designer tự nhận task ────────────────────
+  http.post(`${BASE}/api/v1/orders/:id/self-assign`, ({ params }) => {
+    const id = params.id as string
+    const order = mockOrders.find(o => o.id === id)
+
+    if (!order) return HttpResponse.json({ message: 'Order not found' }, { status: 404 })
+    if (order.status !== 'pending') {
+      return HttpResponse.json({ code: 'ORDER_NOT_PENDING', message: 'Order này không còn ở trạng thái chờ nhận' }, { status: 422 })
+    }
+    if (order.designer_name !== null) {
+      return HttpResponse.json({ code: 'ALREADY_ASSIGNED', message: 'Order này đã được assign cho designer khác' }, { status: 422 })
+    }
+
+    // Capacity check: designer 'Lê Văn A' (mock current designer)
+    const DESIGNER_NAME = 'Lê Văn A'
+    const MAX_CAP = 7
+    const activeCount = mockOrders.filter(o =>
+      o.designer_name === DESIGNER_NAME &&
+      ['assigned', 'in_progress', 'feedback', 'delivered'].includes(o.status)
+    ).length
+    if (activeCount >= MAX_CAP) {
+      return HttpResponse.json({
+        code: 'CAPACITY_FULL',
+        message: `Bạn đang có ${activeCount}/${MAX_CAP} task. Hoàn thành task hiện tại trước khi nhận thêm.`,
+      }, { status: 422 })
+    }
+
+    // Assign
+    order.designer_name = DESIGNER_NAME
+    order.status = 'assigned'
+    order.progress = 2
+
+    return HttpResponse.json({ success: true, order_id: id })
+  }),
+
   // ─── POST /media/upload-url — presigned URL mock ─────────────────────────────
   http.post(`${BASE}/api/v1/media/upload-url`, async ({ request }) => {
     const body = await request.json() as { files?: unknown[] }

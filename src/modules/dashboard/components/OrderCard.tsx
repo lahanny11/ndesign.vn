@@ -44,9 +44,11 @@ interface Props {
   order: OrderCardType
   onTrack: (id: string) => void
   index: number
+  onSelfAssign?: (id: string) => void
+  selfAssigning?: boolean
 }
 
-export default function OrderCard({ order, onTrack, index }: Props) {
+export default function OrderCard({ order, onTrack, index, onSelfAssign, selfAssigning }: Props) {
   const st = STATUS_MAP[order.status] ?? STATUS_MAP.pending
   const progress = order.progress ?? 1
   const pct = Math.round((progress / 7) * 100)
@@ -263,19 +265,39 @@ export default function OrderCard({ order, onTrack, index }: Props) {
             </div>
           </div>
 
-          <button
-            onClick={e => { e.stopPropagation(); onTrack(order.id) }}
-            style={{
-              fontSize: 11, fontWeight: 600, padding: '6px 11px',
-              borderRadius: 8, border: 'none', cursor: 'pointer',
-              color: '#1D1D1F', background: 'rgba(0,0,0,0.06)',
-              transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.10)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
-          >
-            Chi tiết
-          </button>
+          {/* Self-assign button — designer nhận task pending chưa có người */}
+          {onSelfAssign && order.status === 'pending' && order.designer_name === null ? (
+            <button
+              onClick={e => { e.stopPropagation(); onSelfAssign(order.id) }}
+              disabled={selfAssigning}
+              style={{
+                fontSize: 11, fontWeight: 600, padding: '6px 11px',
+                borderRadius: 8, border: 'none', cursor: selfAssigning ? 'not-allowed' : 'pointer',
+                color: '#fff',
+                background: selfAssigning ? '#AEAEB2' : '#16A34A',
+                transition: 'opacity 0.15s',
+                opacity: selfAssigning ? 0.7 : 1,
+              }}
+              onMouseEnter={e => { if (!selfAssigning) e.currentTarget.style.opacity = '0.85' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+            >
+              {selfAssigning ? '...' : '+ Nhận task'}
+            </button>
+          ) : (
+            <button
+              onClick={e => { e.stopPropagation(); onTrack(order.id) }}
+              style={{
+                fontSize: 11, fontWeight: 600, padding: '6px 11px',
+                borderRadius: 8, border: 'none', cursor: 'pointer',
+                color: '#1D1D1F', background: 'rgba(0,0,0,0.06)',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.10)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
+            >
+              Chi tiết
+            </button>
+          )}
         </div>
       </div>
     </div>

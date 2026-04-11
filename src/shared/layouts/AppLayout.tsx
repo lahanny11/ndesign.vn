@@ -100,6 +100,14 @@ const navItems: NavItem[] = [
   { label: 'Feedback',   key: 'feedback',  icon: Icons.feedback,  route: '/feedback' },
 ]
 
+// Co-Leader icon — shield với check
+const CoLeaderIcon = (
+  <svg viewBox="0 0 24 24" fill="none" style={{ width: 14, height: 14 }}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <polyline points="9 12 11 14 15 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 interface RoleOption {
   value: AppRole
   label: string
@@ -108,6 +116,7 @@ interface RoleOption {
 
 const ROLE_OPTIONS: RoleOption[] = [
   { value: 'design_leader', label: 'Design Leader', icon: Icons.star },
+  { value: 'co_leader',     label: 'Co-Leader',     icon: CoLeaderIcon },
   { value: 'designer',      label: 'Designer',      icon: Icons.pen },
   { value: 'orderer',       label: 'Người order',   icon: Icons.user },
 ]
