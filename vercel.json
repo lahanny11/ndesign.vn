@@ -1,13 +1,11 @@
 {
+  "framework": "nextjs",
   "build": {
     "env": {
-      "VITE_DEV_BYPASS": "true",
-      "VITE_API_URL": "http://localhost:3000",
-      "VITE_SUPABASE_URL": "https://placeholder.supabase.co",
-      "VITE_SUPABASE_ANON_KEY": "placeholder-anon-key"
+      "NEXT_PUBLIC_DEV_BYPASS": "true",
+      "NEXT_PUBLIC_API_URL": "http://localhost:3000",
+      "NEXT_PUBLIC_SUPABASE_URL": "https://placeholder.supabase.co",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY": "placeholder-anon-key"
     }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  }
 }
