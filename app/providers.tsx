@@ -15,9 +15,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     const isBypass = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true'
 
     if (isDev || isBypass) {
-      import('@/mocks/browser').then(({ worker }) => {
-        worker.start({ onUnhandledRequest: 'bypass' })
-      })
+      import('@/mocks/browser')
+        .then(({ worker }) => {
+          worker.start({ onUnhandledRequest: 'bypass' })
+          console.log('[MSW] Worker started with handlers:', worker.listHandlers().length)
+        })
+        .catch(err => console.error('[MSW] Failed to load browser mock:', err))
     }
   }, [])
 

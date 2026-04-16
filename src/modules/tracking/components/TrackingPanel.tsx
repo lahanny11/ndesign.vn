@@ -1,5 +1,6 @@
 import type { OrderDetail, TimelineStep } from '../types/tracking.types'
 import OrderChat from './OrderChat'
+import DeliverySection from './DeliverySection'
 
 interface Props {
   order: OrderDetail | null
@@ -413,6 +414,9 @@ export default function TrackingPanel({ order, open, onClose }: Props) {
               <Step key={step.id} step={step} isLast={i === order.steps.length - 1} />
             ))}
           </div>
+
+          {/* Delivery section */}
+          <DeliverySection orderId={order.id} orderStatus={order.status} />
 
           {/* Divider */}
           <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '16px 0' }}/>

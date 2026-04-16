@@ -1,3 +1,6 @@
+import type { Delivery } from './delivery.types'
+export type { Delivery }
+
 export type StepState = 'done' | 'active' | 'flagged' | 'pending'
 
 export interface CheckItem {
@@ -35,4 +38,5 @@ export interface OrderDetail {
   metrics: OrderMetrics
   redFlags?: string[]
   steps: TimelineStep[]
+  deliveries?: Delivery[]
 }

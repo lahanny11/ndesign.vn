@@ -176,6 +176,39 @@ export const designerMetas: DesignerMeta[] = [
   },
 ]
 
+// ─── Deliveries in-memory store ───────────────────────────────────────────────
+
+export interface MockDelivery {
+  id: string
+  order_id: string
+  round: number
+  link_url: string
+  link_type: string
+  link_label: string
+  note: string | null
+  delivered_by: string
+  delivered_at: string
+  is_confirmed: boolean
+  confirmed_at: string | null
+}
+
+// Seed: order '1' (Banner MXH) đã giao lần đầu, đang chờ xác nhận
+export const mockDeliveries: MockDelivery[] = [
+  {
+    id: 'del-1',
+    order_id: '1',
+    round: 1,
+    link_url: 'https://drive.google.com/drive/folders/mock-banner-xuan-2025',
+    link_type: 'google_drive',
+    link_label: 'Google Drive',
+    note: 'Gồm 3 sizes: Feed 1080×1080, Story 1080×1920, Banner web 1200×628. File nguồn .ai trong thư mục Source.',
+    delivered_by: 'Lê Văn A',
+    delivered_at: '2026-04-05T16:00:00Z',
+    is_confirmed: false,
+    confirmed_at: null,
+  },
+]
+
 let _counter = 8
 export function nextOrderNumber() {
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
