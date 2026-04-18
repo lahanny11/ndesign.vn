@@ -22,9 +22,11 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@mocks/*": ["./src/mocks/*"]
     },
     "target": "ES2017"
   },

@@ -1,50 +1,62 @@
+// src/shared/config/api-client.ts — bridge duy nhất FE → BE
 import { supabase } from './supabase'
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
-const DEV_BYPASS = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_DEV_BYPASS === 'true'
+// Hỗ trợ cả VITE_ (Vite) và NEXT_PUBLIC_ (Next.js)
+const BASE_URL =
+  (typeof import.meta !== 'undefined' &&
+    (import.meta as { env?: Record<string, string> }).env?.VITE_API_URL) ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  'http://localhost:3000/api'
 
-async function getAuthHeaders(): Promise<HeadersInit> {
-  // Dev mode: skip Supabase (placeholder credentials would throw)
-  if (DEV_BYPASS) {
-    return { 'Content-Type': 'application/json' }
-  }
-  try {
-    const { data } = await supabase.auth.getSession()
-    const token = data.session?.access_token
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    }
-  } catch {
-    return { 'Content-Type': 'application/json' }
+class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+    public code?: string,
+    public details?: unknown,
+  ) {
+    super(message)
+    this.name = 'ApiError'
   }
 }
 
-async function request<T>(
-  method: string,
-  path: string,
-  body?: unknown,
-): Promise<T> {
-  const headers = await getAuthHeaders()
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
-    headers,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   })
 
+  if (res.status === 204) return undefined as T
+
+  const json = await res.json().catch(() => ({ message: res.statusText }))
+
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ message: res.statusText }))
-    throw { status: res.status, ...error }
+    throw new ApiError(
+      res.status,
+      Array.isArray(json.message) ? json.message.join(', ') : json.message ?? res.statusText,
+      json.code,
+      json.details,
+    )
   }
 
-  if (res.status === 204) return undefined as T
-  return res.json()
+  // Unwrap { data: ... } envelope từ backend
+  return ('data' in json ? json.data : json) as T
 }
 
-export const apiClient = {
-  get: <T>(path: string) => request<T>('GET', path),
-  post: <T>(path: string, body?: unknown) => request<T>('POST', path, body),
-  patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, body),
-  put: <T>(path: string, body?: unknown) => request<T>('PUT', path, body),
-  delete: <T>(path: string) => request<T>('DELETE', path),
+export const api = {
+  get:    <T>(path: string)                  => request<T>('GET',    path),
+  post:   <T>(path: string, body?: unknown)  => request<T>('POST',   path, body),
+  patch:  <T>(path: string, body?: unknown)  => request<T>('PATCH',  path, body),
+  put:    <T>(path: string, body?: unknown)  => request<T>('PUT',    path, body),
+  delete: <T>(path: string)                  => request<T>('DELETE', path),
 }
+
+// Backward compat alias
+export const apiClient = api
